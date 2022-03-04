@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>{{ .title }} - Swagger UI</title>
+    <link href="https://unpkg.com/swagger-ui-dist@3/swagger-ui.css" rel="stylesheet" type="text/css">
+    <script charset="UTF-8" src="https://unpkg.com/swagger-ui-dist@3/swagger-ui-bundle.js"></script>
+</head>
+<body>
+<div id="swagger-ui"></div>
+<script>
+    let options = JSON.parse('{{ .swagger_options }}')
+    const ui = SwaggerUIBundle({
+        url: "{{ .openapi_url }}",
+        dom_id: '#swagger-ui',
+        presets: [
+            SwaggerUIBundle.presets.apis,
+        ],
+        persistAuthorization: true,
+        ...options
+    })
+</script>
+</body>
+</html>
