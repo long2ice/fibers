@@ -11,7 +11,7 @@ type OpenID struct {
 }
 
 func (i *OpenID) Authorize(c *fiber.Ctx) error {
-	return c.Next()
+	return nil
 }
 func (i *OpenID) Provider() string {
 	return OpenIDAuth

@@ -15,11 +15,16 @@ const (
 )
 
 type ISecurity interface {
-	Authorize(g *fiber.Ctx) error
+	Authorize(c *fiber.Ctx) error
+	Callback(c *fiber.Ctx, credentials interface{})
 	Provider() string
 	Scheme() *openapi3.SecurityScheme
 }
 
 type Security struct {
 	ISecurity
+}
+
+func (s *Security) Callback(c *fiber.Ctx, credentials interface{}) {
+	c.Locals(Credentials, credentials)
 }

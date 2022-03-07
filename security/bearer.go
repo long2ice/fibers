@@ -3,6 +3,7 @@ package security
 import (
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
+	"strings"
 )
 
 type Bearer struct {
@@ -10,7 +11,18 @@ type Bearer struct {
 }
 
 func (b *Bearer) Authorize(c *fiber.Ctx) error {
-	return c.Next()
+	auth := c.Get(fiber.HeaderAuthorization)
+	if auth == "" {
+		return fiber.NewError(fiber.StatusUnauthorized, "empty authentication")
+	} else {
+		splits := strings.Split(auth, "Bearer ")
+		if len(splits) != 2 {
+			return fiber.NewError(fiber.StatusUnauthorized, "invalid authentication string")
+		} else {
+			b.Callback(c, splits[1])
+		}
+		return c.Next()
+	}
 }
 func (b *Bearer) Provider() string {
 	return BearerAuth

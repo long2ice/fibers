@@ -7,6 +7,7 @@ import (
 	"github.com/jinzhu/copier"
 	"github.com/long2ice/fibers/security"
 	"reflect"
+	_ "unsafe"
 )
 
 type IAPI interface {
@@ -30,6 +31,9 @@ type Router struct {
 
 var validate = validator.New()
 
+//go:linkname parseToStruct github.com/gofiber/fiber/v2.(*Ctx).parseToStruct
+func parseToStruct(ctx *fiber.Ctx, aliasTag string, out interface{}, data map[string][]string) error
+
 func BindModel(api IAPI) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		model := reflect.New(reflect.TypeOf(api).Elem()).Interface()
@@ -44,11 +48,17 @@ func BindModel(api IAPI) fiber.Handler {
 				return err
 			}
 		}
+		params := make(map[string][]string)
+		for _, param := range c.Route().Params {
+			params[param] = append(params[param], c.Params(param))
+		}
+		if err := parseToStruct(c, "uri", model, params); err != nil {
+			return err
+		}
 		if err := validate.Struct(model); err != nil {
 			return err
 		}
-		err := copier.Copy(api, model)
-		if err != nil {
+		if err := copier.Copy(api, model); err != nil {
 			return err
 		}
 		return c.Next()

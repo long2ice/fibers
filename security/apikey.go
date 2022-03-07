@@ -11,6 +11,12 @@ type ApiKey struct {
 }
 
 func (k *ApiKey) Authorize(c *fiber.Ctx) error {
+	auth := c.Get(k.Name)
+	if auth == "" {
+		return fiber.NewError(fiber.StatusUnauthorized, "empty apikey")
+	} else {
+		k.Callback(c, auth)
+	}
 	return c.Next()
 }
 func (k *ApiKey) Provider() string {

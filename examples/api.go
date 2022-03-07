@@ -14,7 +14,7 @@ type TestQuery struct {
 }
 
 func (t *TestQuery) Handler(c *fiber.Ctx) error {
-	user := c.Locals(security.Credentials).(*security.User)
+	user := c.Locals(security.Credentials).(security.User)
 	fmt.Println(user)
 	return c.JSON(t)
 }
@@ -25,7 +25,7 @@ type TestQueryList struct {
 }
 
 func (t *TestQueryList) Handler(c *fiber.Ctx) error {
-	user := c.Locals(security.Credentials).(*security.User)
+	user := c.Locals(security.Credentials).(security.User)
 	fmt.Println(user)
 	return c.JSON([]TestQueryList{*t})
 }
