@@ -7,10 +7,13 @@ import (
 	"github.com/long2ice/fibers/constants"
 	"github.com/long2ice/fibers/router"
 	"github.com/long2ice/fibers/security"
+	log "github.com/sirupsen/logrus"
 	"mime/multipart"
 	"net/http"
 	"reflect"
 	"regexp"
+	"strconv"
+	"strings"
 	"time"
 )
 
@@ -129,21 +132,26 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 				continue
 			}
 			fieldSchema := swagger.getSchemaByType(value.Interface(), true)
-			descriptionTag, err := tags.Get(constants.DESCRIPTION)
-			if err == nil {
-				fieldSchema.Description = descriptionTag.Name
-			}
+			schema.Properties[tag.Name] = openapi3.NewSchemaRef("", fieldSchema)
 			validateTag, err := tags.Get(constants.VALIDATE)
 			if err == nil {
 				if validateTag.Name == "required" {
 					schema.Required = append(schema.Required, tag.Name)
+				}
+				options := validateTag.Options
+				if len(options) > 0 {
+					schema.Properties[tag.Name] = swagger.getValidateSchemaByOptions(value.Interface(), options)
+					fieldSchema = schema.Properties[tag.Name].Value
 				}
 			}
 			defaultTag, err := tags.Get(constants.DEFAULT)
 			if err == nil {
 				fieldSchema.Default = defaultTag.Name
 			}
-			schema.Properties[tag.Name] = openapi3.NewSchemaRef("", fieldSchema)
+			descriptionTag, err := tags.Get(constants.DESCRIPTION)
+			if err == nil {
+				fieldSchema.Description = descriptionTag.Name
+			}
 		}
 	} else if type_.Kind() == reflect.Slice {
 		schema = openapi3.NewArraySchema()
@@ -228,6 +236,41 @@ func (swagger *Swagger) getResponses(response router.Response) openapi3.Response
 	}
 	return ret
 }
+func (swagger *Swagger) getValidateSchemaByOptions(value interface{}, options []string) *openapi3.SchemaRef {
+	schema := openapi3.NewSchemaRef("", swagger.getSchemaByType(value, true))
+	for _, option := range options {
+		if strings.HasPrefix(option, "oneof=") {
+			optionItems := strings.Split(option[6:], " ")
+			enums := make([]interface{}, len(optionItems))
+			for i, optionItem := range optionItems {
+				enums[i] = optionItem
+			}
+			schema.Value.WithEnum(enums...)
+		}
+		if strings.HasPrefix(option, "max=") {
+			value, err := strconv.ParseFloat(option[4:], 64)
+			if err != nil {
+				log.Panicln(err)
+			}
+			schema.Value.WithMax(value)
+		}
+		if strings.HasPrefix(option, "min=") {
+			value, err := strconv.ParseFloat(option[4:], 64)
+			if err != nil {
+				log.Panicln(err)
+			}
+			schema.Value.WithMin(value)
+		}
+		if strings.HasPrefix(option, "len=") {
+			value, err := strconv.ParseInt(option[4:], 10, 64)
+			if err != nil {
+				log.Panicln(err)
+			}
+			schema.Value.WithLength(value)
+		}
+	}
+	return schema
+}
 func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Parameters {
 	parameters := openapi3.NewParameters()
 	if model == nil {
@@ -255,7 +298,9 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 				parameters = append(parameters, embedParameter)
 			}
 		}
-		parameter := &openapi3.Parameter{}
+		parameter := &openapi3.Parameter{
+			Schema: openapi3.NewSchemaRef("", swagger.getSchemaByType(value.Interface(), true)),
+		}
 		queryTag, err := tags.Get(constants.QUERY)
 		if err == nil {
 			parameter.In = openapi3.ParameterInQuery
@@ -281,19 +326,19 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 		}
 		descriptionTag, err := tags.Get(constants.DESCRIPTION)
 		if err == nil {
-			parameter.Description = descriptionTag.Name
+			parameter.WithDescription(descriptionTag.Name)
 		}
 		validateTag, err := tags.Get(constants.VALIDATE)
 		if err == nil {
-			parameter.Required = validateTag.Name == "required"
+			parameter.WithRequired(validateTag.Name == "required")
+			options := validateTag.Options
+			if len(options) > 0 {
+				parameter.Schema = swagger.getValidateSchemaByOptions(value.Interface(), options)
+			}
 		}
 		defaultTag, err := tags.Get(constants.DEFAULT)
-		schema := swagger.getSchemaByType(value.Interface(), true)
 		if err == nil {
-			schema.Default = defaultTag.Name
-		}
-		parameter.Schema = &openapi3.SchemaRef{
-			Value: schema,
+			parameter.Schema.Value.WithDefault(defaultTag.Name)
 		}
 		parameters = append(parameters, &openapi3.ParameterRef{
 			Value: parameter,

@@ -7,13 +7,14 @@ import (
 	"mime/multipart"
 )
 
-type Token struct {
+type TokenHeader struct {
 	Token string `header:"token" validate:"required" json:"token" default:"test"`
 }
 type TestQuery struct {
-	Token    `embed:""`
-	Name     string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
-	Optional string `query:"optional" json:"optional"`
+	TokenHeader `embed:""`
+	Name        string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
+	Enum        string `query:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" default:"1"`
+	Optional    string `query:"optional" json:"optional"`
 }
 
 func (t *TestQuery) Handler(c *fiber.Ctx) error {
@@ -23,8 +24,8 @@ func (t *TestQuery) Handler(c *fiber.Ctx) error {
 }
 
 type TestQueryList struct {
-	Token `embed:""`
-	Name  string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
+	TokenHeader `embed:""`
+	Name        string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
 }
 
 func (t *TestQueryList) Handler(c *fiber.Ctx) error {
@@ -47,6 +48,7 @@ type TestForm struct {
 	ID   int    `query:"id" validate:"required" json:"id" description:"id of model" default:"1"`
 	Name string `form:"name" validate:"required" json:"name" description:"name of model" default:"test"`
 	List []int  `form:"list" validate:"required" json:"list" description:"list of model"`
+	Enum string `form:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" default:"1"`
 }
 
 func (t *TestForm) Handler(c *fiber.Ctx) error {
