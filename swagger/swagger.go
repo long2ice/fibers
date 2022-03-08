@@ -4,6 +4,7 @@ import (
 	"github.com/fatih/structtag"
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
+	"github.com/long2ice/fibers/constants"
 	"github.com/long2ice/fibers/router"
 	"github.com/long2ice/fibers/security"
 	"mime/multipart"
@@ -11,17 +12,6 @@ import (
 	"reflect"
 	"regexp"
 	"time"
-)
-
-const (
-	DEFAULT     = "default"
-	VALIDATE    = "validate"
-	DESCRIPTION = "description"
-	QUERY       = "query"
-	FORM        = "form"
-	URI         = "uri"
-	HEADER      = "header"
-	COOKIE      = "cookie"
 )
 
 type Swagger struct {
@@ -127,22 +117,22 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 			if err != nil {
 				panic(err)
 			}
-			tag, err := tags.Get(FORM)
+			tag, err := tags.Get(constants.FORM)
 			if err != nil {
 				continue
 			}
 			fieldSchema := swagger.getSchemaByType(value.Interface(), true)
-			descriptionTag, err := tags.Get(DESCRIPTION)
+			descriptionTag, err := tags.Get(constants.DESCRIPTION)
 			if err == nil {
 				fieldSchema.Description = descriptionTag.Name
 			}
-			validateTag, err := tags.Get(VALIDATE)
+			validateTag, err := tags.Get(constants.VALIDATE)
 			if err == nil {
 				if validateTag.Name == "required" {
 					schema.Required = append(schema.Required, tag.Name)
 				}
 			}
-			defaultTag, err := tags.Get(DEFAULT)
+			defaultTag, err := tags.Get(constants.DEFAULT)
 			if err == nil {
 				fieldSchema.Default = defaultTag.Name
 			}
@@ -194,15 +184,15 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 			if err != nil {
 				continue
 			}
-			validateTag, err := tags.Get(VALIDATE)
+			validateTag, err := tags.Get(constants.VALIDATE)
 			if err == nil && validateTag.Name == "required" {
 				schema.Required = append(schema.Required, tag.Name)
 			}
-			descriptionTag, err := tags.Get(DESCRIPTION)
+			descriptionTag, err := tags.Get(constants.DESCRIPTION)
 			if err == nil {
 				fieldSchema.Description = descriptionTag.Name
 			}
-			defaultTag, err := tags.Get(DEFAULT)
+			defaultTag, err := tags.Get(constants.DEFAULT)
 			if err == nil {
 				fieldSchema.Default = defaultTag.Name
 			}
@@ -246,22 +236,22 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 			panic(err)
 		}
 		parameter := &openapi3.Parameter{}
-		queryTag, err := tags.Get(QUERY)
+		queryTag, err := tags.Get(constants.QUERY)
 		if err == nil {
 			parameter.In = openapi3.ParameterInQuery
 			parameter.Name = queryTag.Name
 		}
-		uriTag, err := tags.Get(URI)
+		uriTag, err := tags.Get(constants.URI)
 		if err == nil {
 			parameter.In = openapi3.ParameterInPath
 			parameter.Name = uriTag.Name
 		}
-		headerTag, err := tags.Get(HEADER)
+		headerTag, err := tags.Get(constants.HEADER)
 		if err == nil {
 			parameter.In = openapi3.ParameterInHeader
 			parameter.Name = headerTag.Name
 		}
-		cookieTag, err := tags.Get(COOKIE)
+		cookieTag, err := tags.Get(constants.COOKIE)
 		if err == nil {
 			parameter.In = openapi3.ParameterInCookie
 			parameter.Name = cookieTag.Name
@@ -269,15 +259,15 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 		if parameter.In == "" {
 			continue
 		}
-		descriptionTag, err := tags.Get(DESCRIPTION)
+		descriptionTag, err := tags.Get(constants.DESCRIPTION)
 		if err == nil {
 			parameter.Description = descriptionTag.Name
 		}
-		validateTag, err := tags.Get(VALIDATE)
+		validateTag, err := tags.Get(constants.VALIDATE)
 		if err == nil {
 			parameter.Required = validateTag.Name == "required"
 		}
-		defaultTag, err := tags.Get(DEFAULT)
+		defaultTag, err := tags.Get(constants.DEFAULT)
 		schema := swagger.getSchemaByType(value.Interface(), true)
 		if err == nil {
 			schema.Default = defaultTag.Name
