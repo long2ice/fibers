@@ -33,7 +33,7 @@ var validate = validator.New()
 func BindModel(api IAPI) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		model := reflect.New(reflect.TypeOf(api).Elem()).Interface()
-		if err := headerParser(c, model); err != nil {
+		if err := HeaderParser(c, model); err != nil {
 			return err
 		}
 		if err := c.QueryParser(model); err != nil {
@@ -44,7 +44,7 @@ func BindModel(api IAPI) fiber.Handler {
 				return err
 			}
 		}
-		if err := paramsParser(c, model); err != nil {
+		if err := ParamsParser(c, model); err != nil {
 			return err
 		}
 		if err := validate.Struct(model); err != nil {

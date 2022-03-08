@@ -15,7 +15,7 @@ func ParseToStruct(ctx *fiber.Ctx, aliasTag string, out interface{}, data map[st
 //go:linkname equalFieldType github.com/gofiber/fiber/v2.equalFieldType
 func equalFieldType(out interface{}, kind reflect.Kind, key string) bool
 
-func headerParser(c *fiber.Ctx, model interface{}) error {
+func HeaderParser(c *fiber.Ctx, model interface{}) error {
 	headerData := make(map[string][]string)
 	c.Request().Header.VisitAll(func(key, val []byte) {
 		k := utils.UnsafeString(key)
@@ -35,7 +35,7 @@ func headerParser(c *fiber.Ctx, model interface{}) error {
 	}
 	return nil
 }
-func paramsParser(c *fiber.Ctx, model interface{}) error {
+func ParamsParser(c *fiber.Ctx, model interface{}) error {
 	params := make(map[string][]string)
 	for _, param := range c.Route().Params {
 		params[param] = append(params[param], c.Params(param))
