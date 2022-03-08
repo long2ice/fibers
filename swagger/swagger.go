@@ -117,6 +117,13 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 			if err != nil {
 				panic(err)
 			}
+			_, err = tags.Get(constants.EMBED)
+			if err == nil {
+				embedSchema := swagger.getRequestSchemaByModel(value.Interface())
+				for key, embedProperty := range embedSchema.Properties {
+					schema.Properties[key] = embedProperty
+				}
+			}
 			tag, err := tags.Get(constants.FORM)
 			if err != nil {
 				continue
@@ -226,14 +233,27 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 	if model == nil {
 		return parameters
 	}
-	type_ := reflect.TypeOf(model).Elem()
-	value_ := reflect.ValueOf(model).Elem()
+	type_ := reflect.TypeOf(model)
+	if type_.Kind() == reflect.Ptr {
+		type_ = type_.Elem()
+	}
+	value_ := reflect.ValueOf(model)
+	if value_.Kind() == reflect.Ptr {
+		value_ = value_.Elem()
+	}
 	for i := 0; i < type_.NumField(); i++ {
 		field := type_.Field(i)
 		value := value_.Field(i)
 		tags, err := structtag.Parse(string(field.Tag))
 		if err != nil {
 			panic(err)
+		}
+		_, err = tags.Get(constants.EMBED)
+		if err == nil {
+			embedParameters := swagger.getParametersByModel(value.Interface())
+			for _, embedParameter := range embedParameters {
+				parameters = append(parameters, embedParameter)
+			}
 		}
 		parameter := &openapi3.Parameter{}
 		queryTag, err := tags.Get(constants.QUERY)

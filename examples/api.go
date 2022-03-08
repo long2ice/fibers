@@ -7,9 +7,12 @@ import (
 	"mime/multipart"
 )
 
+type Token struct {
+	Token string `header:"token" validate:"required" json:"token" default:"test"`
+}
 type TestQuery struct {
+	Token    `embed:""`
 	Name     string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
-	Token    string `header:"token" validate:"required" json:"token" default:"test"`
 	Optional string `query:"optional" json:"optional"`
 }
 
@@ -20,8 +23,8 @@ func (t *TestQuery) Handler(c *fiber.Ctx) error {
 }
 
 type TestQueryList struct {
+	Token `embed:""`
 	Name  string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
-	Token string `header:"token" validate:"required" json:"token" default:"test"`
 }
 
 func (t *TestQueryList) Handler(c *fiber.Ctx) error {
