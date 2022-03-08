@@ -22,9 +22,10 @@ type Fibers struct {
 	rootPath string
 }
 
-func New(swagger *swagger.Swagger) *Fibers {
+func New(swagger *swagger.Swagger, config fiber.Config) *Fibers {
 	engine := html.NewFileSystem(http.FS(templates), ".html")
-	f := &Fibers{App: fiber.New(fiber.Config{Views: engine}), Swagger: swagger, Routers: make(map[string]map[string]*router.Router), subApps: make(map[string]*Fibers)}
+	config.Views = engine
+	f := &Fibers{App: fiber.New(config), Swagger: swagger, Routers: make(map[string]map[string]*router.Router), subApps: make(map[string]*Fibers)}
 	if swagger != nil {
 		swagger.Routers = f.Routers
 	}

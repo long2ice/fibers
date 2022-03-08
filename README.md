@@ -141,8 +141,10 @@ Then you can mount router in your application or group.
 ```go
 package main
 
+import "github.com/gofiber/fiber/v2"
+
 func main() {
-  app := fibers.New(NewSwagger())
+  app := fibers.New(NewSwagger(), fiber.Config{})
   queryGroup := app.Group("/query", fibers.Tags("Query"))
   queryGroup.Get("", query)
   queryGroup.Get("/:id", queryPath)
@@ -162,16 +164,17 @@ package main
 import (
   "github.com/gin-contrib/cors"
   "github.com/long2ice/fibers"
+  "github.com/gofiber/fiber/v2"
 )
 
 func main() {
-  app := fibers.New(NewSwagger())
+  app := fibers.New(NewSwagger(), fiber.Config{})
   app.Use(
     logger.New(),
     recover.New(),
     cors.New(),
   )
-  subApp := fibers.New(NewSwagger())
+  subApp := fibers.New(NewSwagger(), fiber.Config{})
   subApp.Get("/noModel", noModel)
   app.Mount("/sub", subApp)
   app.Use(cors.New(cors.Config{
@@ -204,7 +207,7 @@ fun!
 In some cases you may want to disable docs such as in production, just put `nil` to `fibers.New`.
 
 ```go
-app = fibers.New(nil)
+app = fibers.New(nil, fiber.Config{})
 ```
 
 ### SubAPP Mount
@@ -215,9 +218,11 @@ is also separate.
 ```go
 package main
 
+import "github.com/gofiber/fiber/v2"
+
 func main() {
-  app := fibers.New(NewSwagger())
-  subApp := fibers.New(NewSwagger())
+  app := fibers.New(NewSwagger(), fiber.Config{})
+  subApp := fibers.New(NewSwagger(), fiber.Config{})
   subApp.Get("/noModel", noModel)
   app.Mount("/sub", subApp)
 }

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -10,13 +11,13 @@ import (
 )
 
 func main() {
-	app := fibers.New(NewSwagger())
+	app := fibers.New(NewSwagger(), fiber.Config{})
 	app.Use(
 		logger.New(),
 		recover.New(),
 		cors.New(),
 	)
-	subApp := fibers.New(NewSwagger())
+	subApp := fibers.New(NewSwagger(), fiber.Config{})
 	subApp.Get("/noModel", noModel)
 	app.Mount("/sub", subApp)
 	app.Use(cors.New(cors.Config{
