@@ -177,6 +177,9 @@ func (swagger *Swagger) getRequestBodyByModel(model interface{}, contentType str
 	return body
 }
 func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Schema {
+	if model == nil {
+		return openapi3.NewObjectSchema()
+	}
 	type_ := reflect.TypeOf(model)
 	value_ := reflect.ValueOf(model)
 	if type_.Kind() == reflect.Ptr {

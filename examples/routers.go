@@ -34,6 +34,11 @@ var (
 		&TestNoModel{},
 		router.Summary("Test no model"),
 		router.Description("Test no model"),
+		router.Responses(router.Response{
+			"200": router.ResponseItem{
+				Description: "success",
+			},
+		}),
 	)
 	queryPath = router.New(
 		&TestQueryPath{},
