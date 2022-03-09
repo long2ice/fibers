@@ -177,8 +177,9 @@ func (swagger *Swagger) getRequestBodyByModel(model interface{}, contentType str
 	return body
 }
 func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Schema {
+	schema := openapi3.NewObjectSchema()
 	if model == nil {
-		return openapi3.NewObjectSchema()
+		return schema
 	}
 	type_ := reflect.TypeOf(model)
 	value_ := reflect.ValueOf(model)
@@ -188,7 +189,6 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 	if value_.Kind() == reflect.Ptr {
 		value_ = value_.Elem()
 	}
-	schema := openapi3.NewObjectSchema()
 	if type_.Kind() == reflect.Struct {
 		for i := 0; i < type_.NumField(); i++ {
 			field := type_.Field(i)

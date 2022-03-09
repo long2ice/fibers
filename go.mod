@@ -9,6 +9,7 @@ require (
 	github.com/gofiber/fiber/v2 v2.28.0
 	github.com/gofiber/template v1.6.24
 	github.com/jinzhu/copier v0.3.5
+	github.com/ompluscator/dynamic-struct v1.3.0
 	github.com/sirupsen/logrus v1.4.2
 )
 

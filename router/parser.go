@@ -9,12 +9,24 @@ import (
 	_ "unsafe"
 )
 
-//go:linkname ParseToStruct github.com/gofiber/fiber/v2.(*Ctx).parseToStruct
-func ParseToStruct(ctx *fiber.Ctx, aliasTag string, out interface{}, data map[string][]string) error
+//go:linkname decoderBuilder github.com/gofiber/fiber/v2.decoderBuilder
+func decoderBuilder(parserConfig fiber.ParserConfig) interface{}
 
 //go:linkname equalFieldType github.com/gofiber/fiber/v2.equalFieldType
 func equalFieldType(out interface{}, kind reflect.Kind, key string) bool
 
+//go:linkname Decoder github.com/gofiber/fiber/v2/internal/schema.Decoder
+type Decoder interface {
+	Decode(dst interface{}, src map[string][]string) error
+}
+
+func ParseToStruct(aliasTag string, out interface{}, data map[string][]string) error {
+	decoder := decoderBuilder(fiber.ParserConfig{
+		SetAliasTag:       aliasTag,
+		IgnoreUnknownKeys: true,
+	})
+	return decoder.(Decoder).Decode(out, data)
+}
 func HeaderParser(c *fiber.Ctx, model interface{}) error {
 	headerData := make(map[string][]string)
 	c.Request().Header.VisitAll(func(key, val []byte) {
@@ -30,18 +42,12 @@ func HeaderParser(c *fiber.Ctx, model interface{}) error {
 		}
 
 	})
-	if err := ParseToStruct(c, constants.HEADER, model, headerData); err != nil {
-		return err
-	}
-	return nil
+	return ParseToStruct(constants.HEADER, model, headerData)
 }
 func ParamsParser(c *fiber.Ctx, model interface{}) error {
 	params := make(map[string][]string)
 	for _, param := range c.Route().Params {
 		params[param] = append(params[param], c.Params(param))
 	}
-	if err := ParseToStruct(c, constants.URI, model, params); err != nil {
-		return err
-	}
-	return nil
+	return ParseToStruct(constants.URI, model, params)
 }
