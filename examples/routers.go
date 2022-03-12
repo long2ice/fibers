@@ -44,11 +44,17 @@ var (
 		&TestQueryPath{},
 		router.Summary("Test query path"),
 		router.Description("Test query path model"),
+		router.Responses(router.Response{
+			"200": router.ResponseItem{
+				Description: "success",
+				Model:       TestQueryPath{},
+			},
+		}),
 	)
 	formEncode = router.New(
 		&TestForm{},
 		router.Summary("Test form"),
-		router.ContentType(fiber.MIMEApplicationForm),
+		router.ContentType(fiber.MIMEApplicationForm, router.ContentTypeRequest),
 	)
 	body = router.New(
 		&TestForm{},
@@ -62,6 +68,6 @@ var (
 	file = router.New(
 		&TestFile{},
 		router.Summary("Test file upload"),
-		router.ContentType(fiber.MIMEApplicationForm),
+		router.ContentType(fiber.MIMEApplicationForm, router.ContentTypeRequest),
 	)
 )

@@ -13,19 +13,20 @@ type IAPI interface {
 	Handler(context *fiber.Ctx) error
 }
 type Router struct {
-	Handlers    *list.List
-	Path        string
-	Method      string
-	Summary     string
-	Description string
-	Deprecated  bool
-	ContentType string
-	Tags        []string
-	API         IAPI
-	OperationID string
-	Exclude     bool
-	Securities  []security.ISecurity
-	Response    Response
+	Handlers            *list.List
+	Path                string
+	Method              string
+	Summary             string
+	Description         string
+	Deprecated          bool
+	RequestContentType  string
+	ResponseContentType string
+	Tags                []string
+	API                 IAPI
+	OperationID         string
+	Exclude             bool
+	Securities          []security.ISecurity
+	Response            Response
 }
 
 var validate = validator.New()

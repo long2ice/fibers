@@ -66,8 +66,12 @@ func Exclude() Option {
 }
 
 // ContentType Set request contentType
-func ContentType(contentType string) Option {
+func ContentType(contentType string, contentTypeType ContentTypeType) Option {
 	return func(router *Router) {
-		router.ContentType = contentType
+		if contentTypeType == ContentTypeRequest {
+			router.RequestContentType = contentType
+		} else {
+			router.ResponseContentType = contentType
+		}
 	}
 }

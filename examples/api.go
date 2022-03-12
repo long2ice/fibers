@@ -8,12 +8,12 @@ import (
 )
 
 type TokenHeader struct {
-	Token string `header:"token" validate:"required" json:"token" default:"test"`
+	Token string `header:"token" validate:"required" json:"token" example:"test"`
 }
 type TestQuery struct {
 	TokenHeader `embed:""`
-	Name        string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
-	Enum        string `query:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" default:"1"`
+	Name        string `query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
+	Enum        string `query:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" example:"1"`
 	Optional    string `query:"optional" json:"optional"`
 }
 
@@ -25,7 +25,7 @@ func (t *TestQuery) Handler(c *fiber.Ctx) error {
 
 type TestQueryList struct {
 	TokenHeader `embed:""`
-	Name        string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
+	Name        string `query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
 }
 
 func (t *TestQueryList) Handler(c *fiber.Ctx) error {
@@ -35,9 +35,9 @@ func (t *TestQueryList) Handler(c *fiber.Ctx) error {
 }
 
 type TestQueryPath struct {
-	Name  string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
-	ID    int    `uri:"id" validate:"required" json:"id" description:"id of model" default:"1"`
-	Token string `header:"token" validate:"required" json:"token" default:"test"`
+	Name  string `query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
+	ID    int    `uri:"id" validate:"required" json:"id" description:"id of model" example:"1"`
+	Token string `header:"token" validate:"required" json:"token" example:"test"`
 }
 
 func (t *TestQueryPath) Handler(c *fiber.Ctx) error {
@@ -45,10 +45,10 @@ func (t *TestQueryPath) Handler(c *fiber.Ctx) error {
 }
 
 type TestForm struct {
-	ID   int    `query:"id" validate:"required" json:"id" description:"id of model" default:"1"`
-	Name string `form:"name" validate:"required" json:"name" description:"name of model" default:"test"`
+	ID   int    `query:"id" validate:"required" json:"id" description:"id of model" example:"1"`
+	Name string `form:"name" validate:"required" json:"name" description:"name of model" example:"test"`
 	List []int  `form:"list" validate:"required" json:"list" description:"list of model"`
-	Enum string `form:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" default:"1"`
+	Enum string `form:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" example:"1"`
 }
 
 func (t *TestForm) Handler(c *fiber.Ctx) error {

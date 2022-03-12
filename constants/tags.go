@@ -5,4 +5,5 @@ const (
 	VALIDATE    = "validate"
 	DESCRIPTION = "description"
 	EMBED       = "embed"
+	EXAMPLE     = "example"
 )

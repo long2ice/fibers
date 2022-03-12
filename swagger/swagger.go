@@ -148,6 +148,10 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 			if err == nil {
 				fieldSchema.Default = defaultTag.Name
 			}
+			exampleTag, err := tags.Get(constants.EXAMPLE)
+			if err == nil {
+				fieldSchema.Example = exampleTag.Name
+			}
 			descriptionTag, err := tags.Get(constants.DESCRIPTION)
 			if err == nil {
 				fieldSchema.Description = descriptionTag.Name
@@ -214,6 +218,10 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 			if err == nil {
 				fieldSchema.Default = defaultTag.Name
 			}
+			exampleTag, err := tags.Get(constants.EXAMPLE)
+			if err == nil {
+				fieldSchema.Example = exampleTag.Name
+			}
 			schema.Properties[tag.Name] = openapi3.NewSchemaRef("", fieldSchema)
 		}
 	} else if type_.Kind() == reflect.Slice {
@@ -224,11 +232,16 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 	}
 	return schema
 }
-func (swagger *Swagger) getResponses(response router.Response) openapi3.Responses {
+func (swagger *Swagger) getResponses(response router.Response, contentType string) openapi3.Responses {
 	ret := openapi3.NewResponses()
 	for k, v := range response {
 		schema := swagger.getResponseSchemaByModel(v.Model)
-		content := openapi3.NewContentWithJSONSchema(schema)
+		var content openapi3.Content
+		if contentType == "" || contentType == fiber.MIMEApplicationJSON {
+			content = openapi3.NewContentWithJSONSchema(schema)
+		} else {
+			content = openapi3.NewContentWithSchema(schema, []string{contentType})
+		}
 		description := v.Description
 		ret[k] = &openapi3.ResponseRef{
 			Value: &openapi3.Response{
@@ -344,6 +357,10 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 		if err == nil {
 			parameter.Schema.Value.WithDefault(defaultTag.Name)
 		}
+		exampleTag, err := tags.Get(constants.EXAMPLE)
+		if err == nil {
+			parameter.Schema.Value.Example = exampleTag.Name
+		}
 		parameters = append(parameters, &openapi3.ParameterRef{
 			Value: parameter,
 		})
@@ -371,11 +388,11 @@ func (swagger *Swagger) getPaths() openapi3.Paths {
 				Summary:     r.Summary,
 				Description: r.Description,
 				Deprecated:  r.Deprecated,
-				Responses:   swagger.getResponses(r.Response),
+				Responses:   swagger.getResponses(r.Response, r.ResponseContentType),
 				Parameters:  swagger.getParametersByModel(model),
 				Security:    swagger.getSecurityRequirements(r.Securities),
 			}
-			requestBody := swagger.getRequestBodyByModel(model, r.ContentType)
+			requestBody := swagger.getRequestBodyByModel(model, r.RequestContentType)
 			if method == http.MethodGet {
 				pathItem.Get = operation
 			} else if method == http.MethodPost {
