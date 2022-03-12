@@ -1,4 +1,4 @@
-# Swagger + Fiber = Fibers
+# Fiber + Swagger = Fibers
 
 [![deploy](https://github.com/long2ice/fibers/actions/workflows/deploy.yml/badge.svg)](https://github.com/long2ice/fibers/actions/workflows/deploy.yml)
 [![Go Reference](https://pkg.go.dev/badge/github.com/long2ice/fibers.svg)](https://pkg.go.dev/github.com/long2ice/fibers)
