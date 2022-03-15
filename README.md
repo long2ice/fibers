@@ -71,13 +71,27 @@ package examples
 import "github.com/gofiber/fiber/v2"
 
 type TestQuery struct {
-  Name string `query:"name" binding:"required" json:"name" description:"name of model" default:"test"`
+  Name string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
 }
 
 func (t *TestQuery) Handler(c *fiber.Ctx) error {
   return c.JSON(t)
 }
 ```
+
+#### All supported tags
+
+| name          | description                                                     |
+|---------------|-----------------------------------------------------------------|
+| `query`       | binding query param                                             |
+| `form`        | binding body param                                              |
+| `uri`         | binding path param                                              |
+| `header`      | binding header param                                            |
+| `validate`    | [validator](https://github.com/go-playground/validator) support |
+| `description` | swagger docs param description                                  |
+| `example`     | swagger docs param example                                      |
+| `default`     | swagger docs param default value                                |
+| `embed`       | embed struct params                                             |
 
 Note that the attributes in `TestQuery`? `Fibers` will validate request and inject it automatically, then you can use it
 in handler easily.
@@ -163,8 +177,8 @@ package main
 
 import (
   "github.com/gin-contrib/cors"
-  "github.com/long2ice/fibers"
   "github.com/gofiber/fiber/v2"
+  "github.com/long2ice/fibers"
 )
 
 func main() {
