@@ -14,25 +14,25 @@ import (
 //go:embed templates/*
 var templates embed.FS
 
-type Fibers struct {
+type App struct {
 	*fiber.App
 	Swagger  *swagger.Swagger
 	Routers  map[string]map[string]*router.Router
-	subApps  map[string]*Fibers
+	subApps  map[string]*App
 	rootPath string
 }
 
-func New(swagger *swagger.Swagger, config fiber.Config) *Fibers {
+func New(swagger *swagger.Swagger, config fiber.Config) *App {
 	engine := html.NewFileSystem(http.FS(templates), ".html")
 	config.Views = engine
-	f := &Fibers{App: fiber.New(config), Swagger: swagger, Routers: make(map[string]map[string]*router.Router), subApps: make(map[string]*Fibers)}
+	f := &App{App: fiber.New(config), Swagger: swagger, Routers: make(map[string]map[string]*router.Router), subApps: make(map[string]*App)}
 	if swagger != nil {
 		swagger.Routers = f.Routers
 	}
 	return f
 }
 
-func (g *Fibers) Mount(path string, app *Fibers) {
+func (g *App) Mount(path string, app *App) {
 	app.rootPath = path
 	app.App = g.App
 	app.Swagger.Servers = append(app.Swagger.Servers, &openapi3.Server{
@@ -41,10 +41,10 @@ func (g *Fibers) Mount(path string, app *Fibers) {
 	g.subApps[path] = app
 }
 
-func (g *Fibers) Group(path string, options ...Option) *Group {
+func (g *App) Group(path string, options ...Option) *Group {
 	group := &Group{
-		Fibers: g,
-		Path:   path,
+		App:  g,
+		Path: path,
 	}
 	for _, option := range options {
 		option(group)
@@ -52,7 +52,7 @@ func (g *Fibers) Group(path string, options ...Option) *Group {
 	return group
 }
 
-func (g *Fibers) Handle(path string, method string, r *router.Router) {
+func (g *App) Handle(path string, method string, r *router.Router) {
 	r.Method = method
 	r.Path = path
 	if g.Routers[path] == nil {
@@ -61,35 +61,35 @@ func (g *Fibers) Handle(path string, method string, r *router.Router) {
 	g.Routers[path][method] = r
 }
 
-func (g *Fibers) Get(path string, router *router.Router) {
+func (g *App) Get(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodGet, router)
 }
 
-func (g *Fibers) Post(path string, router *router.Router) {
+func (g *App) Post(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodPost, router)
 }
 
-func (g *Fibers) Head(path string, router *router.Router) {
+func (g *App) Head(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodHead, router)
 }
 
-func (g *Fibers) Patch(path string, router *router.Router) {
+func (g *App) Patch(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodPatch, router)
 }
 
-func (g *Fibers) Delete(path string, router *router.Router) {
+func (g *App) Delete(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodDelete, router)
 }
 
-func (g *Fibers) Put(path string, router *router.Router) {
+func (g *App) Put(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodPut, router)
 }
 
-func (g *Fibers) Options(path string, router *router.Router) {
+func (g *App) Options(path string, router *router.Router) {
 	g.Handle(path, fiber.MethodOptions, router)
 }
 
-func (g *Fibers) init() {
+func (g *App) init() {
 	g.initRouters()
 	if g.Swagger == nil {
 		return
@@ -129,7 +129,7 @@ func (g *Fibers) init() {
 	})
 	g.Swagger.BuildOpenAPI()
 }
-func (g *Fibers) initRouters() {
+func (g *App) initRouters() {
 	for path, m := range g.Routers {
 		path = g.fullPath(path)
 		for method, r := range m {
@@ -154,13 +154,16 @@ func (g *Fibers) initRouters() {
 		}
 	}
 }
-func (g *Fibers) fullPath(path string) string {
+func (g *App) fullPath(path string) string {
 	return g.rootPath + path
 }
-func (g *Fibers) Listen(addr string) error {
+func (g *App) Init() {
 	g.init()
 	for _, s := range g.subApps {
 		s.init()
 	}
+}
+func (g *App) Listen(addr string) error {
+	g.Init()
 	return g.App.Listen(addr)
 }

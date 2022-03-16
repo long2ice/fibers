@@ -8,7 +8,7 @@ import (
 )
 
 type Group struct {
-	*Fibers
+	*App
 	Path       string
 	Tags       []string
 	Handlers   []fiber.Handler
@@ -46,7 +46,7 @@ func (g *Group) Handle(path string, method string, r *router.Router) {
 	router.Handlers(g.Handlers...)(r)
 	router.Tags(g.Tags...)(r)
 	router.Security(g.Securities...)(r)
-	g.Fibers.Handle(g.Path+path, method, r)
+	g.App.Handle(g.Path+path, method, r)
 }
 func (g *Group) Get(path string, router *router.Router) {
 	g.Handle(path, http.MethodGet, router)
@@ -78,7 +78,7 @@ func (g *Group) Options(path string, router *router.Router) {
 
 func (g *Group) Group(path string, options ...Option) *Group {
 	group := &Group{
-		Fibers:     g.Fibers,
+		App:        g.App,
 		Path:       g.Path + path,
 		Tags:       g.Tags,
 		Handlers:   g.Handlers,
