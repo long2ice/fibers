@@ -6,6 +6,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/copier"
 	"github.com/long2ice/fibers/security"
+	"github.com/mcuadros/go-defaults"
 	"reflect"
 )
 
@@ -48,6 +49,7 @@ func BindModel(api IAPI) fiber.Handler {
 		if err := ParamsParser(c, model); err != nil {
 			return err
 		}
+		defaults.SetDefaults(model)
 		if err := validate.Struct(model); err != nil {
 			return err
 		}
