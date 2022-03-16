@@ -15,17 +15,19 @@ func decoderBuilder(parserConfig fiber.ParserConfig) interface{}
 //go:linkname equalFieldType github.com/gofiber/fiber/v2.equalFieldType
 func equalFieldType(out interface{}, kind reflect.Kind, key string) bool
 
-//go:linkname Decoder github.com/gofiber/fiber/v2/internal/schema.Decoder
-type Decoder interface {
-	Decode(dst interface{}, src map[string][]string) error
-}
-
 func ParseToStruct(aliasTag string, out interface{}, data map[string][]string) error {
 	decoder := decoderBuilder(fiber.ParserConfig{
 		SetAliasTag:       aliasTag,
 		IgnoreUnknownKeys: true,
 	})
-	return decoder.(Decoder).Decode(out, data)
+	result := reflect.ValueOf(decoder).MethodByName("Decode").Call([]reflect.Value{reflect.ValueOf(out), reflect.ValueOf(data)})
+	switch result[0].Interface().(type) {
+	case error:
+		return result[0].Interface().(error)
+	case nil:
+		return nil
+	}
+	return nil
 }
 func HeaderParser(c *fiber.Ctx, model interface{}) error {
 	headerData := make(map[string][]string)

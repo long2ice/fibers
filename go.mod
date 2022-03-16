@@ -9,7 +9,6 @@ require (
 	github.com/gofiber/fiber/v2 v2.28.0
 	github.com/gofiber/template v1.6.24
 	github.com/jinzhu/copier v0.3.5
-	github.com/ompluscator/dynamic-struct v1.3.0
 	github.com/sirupsen/logrus v1.4.2
 )
 
@@ -28,6 +27,6 @@ require (
 	github.com/valyala/fasthttp v1.33.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20220112180741-5e0467b6c7ce // indirect
-	golang.org/x/sys v0.0.0-20220227234510-4e6760a101f9 // indirect
+	golang.org/x/sys v0.0.0-20220315194320-039c03cc5b86 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
