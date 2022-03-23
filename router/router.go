@@ -2,12 +2,13 @@ package router
 
 import (
 	"container/list"
+	"reflect"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/jinzhu/copier"
 	"github.com/long2ice/fibers/security"
 	"github.com/mcuadros/go-defaults"
-	"reflect"
 )
 
 type IAPI interface {
@@ -36,6 +37,9 @@ func BindModel(api IAPI) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		model := reflect.New(reflect.TypeOf(api).Elem()).Interface()
 		if err := HeaderParser(c, model); err != nil {
+			return err
+		}
+		if err := CookiesParser(c, model); err != nil {
 			return err
 		}
 		if err := c.QueryParser(model); err != nil {

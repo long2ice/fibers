@@ -2,9 +2,10 @@ package main
 
 import (
 	"fmt"
+	"mime/multipart"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/long2ice/fibers/security"
-	"mime/multipart"
 )
 
 type TokenHeader struct {
@@ -57,10 +58,11 @@ func (t *TestForm) Handler(c *fiber.Ctx) error {
 }
 
 type TestNoModel struct {
+	C string `cookie:"c" validate:"required" json:"cookie" description:"cookie is not supported in try it out of swagger ui" example:"test"`
 }
 
 func (t *TestNoModel) Handler(c *fiber.Ctx) error {
-	return c.JSON(nil)
+	return c.JSON(t)
 }
 
 type TestFile struct {

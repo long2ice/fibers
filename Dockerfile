@@ -1,5 +1,4 @@
 FROM golang AS builder
-MAINTAINER long2ice "long2ice@gmail.com"
 ENV GO111MODULE=on
 ENV GOOS=linux
 ENV GOARCH=$GOARCH
@@ -15,5 +14,4 @@ FROM scratch
 COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certificates.crt
 COPY --from=builder /build/app /
 COPY --from=builder /usr/share/zoneinfo /usr/share/zoneinfo
-ENV TZ=Asia/Shanghai
 ENTRYPOINT ["/app"]

@@ -1,13 +1,14 @@
 package main
 
 import (
+	"log"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/long2ice/fibers"
 	"github.com/long2ice/fibers/security"
-	"log"
 )
 
 func main() {

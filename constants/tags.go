@@ -6,4 +6,5 @@ const (
 	DESCRIPTION = "description"
 	EMBED       = "embed"
 	EXAMPLE     = "example"
+	JSON        = "json"
 )

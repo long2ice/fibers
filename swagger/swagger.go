@@ -1,13 +1,6 @@
 package swagger
 
 import (
-	"github.com/fatih/structtag"
-	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/gofiber/fiber/v2"
-	"github.com/long2ice/fibers/constants"
-	"github.com/long2ice/fibers/router"
-	"github.com/long2ice/fibers/security"
-	log "github.com/sirupsen/logrus"
 	"mime/multipart"
 	"net/http"
 	"reflect"
@@ -15,6 +8,14 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/fatih/structtag"
+	"github.com/getkin/kin-openapi/openapi3"
+	"github.com/gofiber/fiber/v2"
+	"github.com/long2ice/fibers/constants"
+	"github.com/long2ice/fibers/router"
+	"github.com/long2ice/fibers/security"
+	log "github.com/sirupsen/logrus"
 )
 
 type Swagger struct {
@@ -126,6 +127,9 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 				for key, embedProperty := range embedSchema.Properties {
 					schema.Properties[key] = embedProperty
 				}
+				for _, name := range embedSchema.Required {
+					schema.Required = append(schema.Required, name)
+				}
 			}
 			tag, err := tags.Get(constants.FORM)
 			if err != nil {
@@ -202,7 +206,17 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 			if err != nil {
 				panic(err)
 			}
-			tag, err := tags.Get("json")
+			_, err = tags.Get(constants.EMBED)
+			if err == nil {
+				embedSchema := swagger.getResponseSchemaByModel(value.Interface())
+				for key, embedProperty := range embedSchema.Properties {
+					schema.Properties[key] = embedProperty
+				}
+				for _, name := range embedSchema.Required {
+					schema.Required = append(schema.Required, name)
+				}
+			}
+			tag, err := tags.Get(constants.JSON)
 			if err != nil {
 				continue
 			}

@@ -1,10 +1,11 @@
 package fibers
 
 import (
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/long2ice/fibers/router"
 	"github.com/long2ice/fibers/security"
-	"net/http"
 )
 
 type Group struct {

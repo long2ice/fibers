@@ -5,13 +5,13 @@
 
 ## Introduction
 
-`Fibers` is a web framework based on `Fiber` and `Swagger`, which wraps `Fiber` and provides built-in swagger api docs
+`Fibers` is a web framework based on `Fiber` and `Swagger` inspired by [FastAPI](https://github.com/tiangolo/fastapi), which wraps `Fiber` and provides built-in swagger api docs
 and request model validation.
 
 ## Why I build this project?
 
 Previous I have used [FastAPI](https://github.com/tiangolo/fastapi), which gives me a great experience in api docs
-generation, because nobody like writing api docs.
+generation and api writing, because nobody like writing api docs.
 
 Now I use `Fiber` but I can't found anything like that, I found [swag](https://github.com/swaggo/swag) but which write
 docs with comment is so stupid. So there is `Fibers`.
@@ -26,10 +26,10 @@ go get -u github.com/long2ice/fibers
 
 You can see online demo at <https://fibers.long2ice.io/docs> or <https://fibers.long2ice.io/redoc>.
 
-![](https://raw.githubusercontent.com/long2ice/fibers/dev/images/docs.png)
-![](https://raw.githubusercontent.com/long2ice/fibers/dev/images/redoc.png)
+![docs](https://raw.githubusercontent.com/long2ice/fibers/dev/images/docs.png)
+![redoc](https://raw.githubusercontent.com/long2ice/fibers/dev/images/redoc.png)
 
-And you can reference all usage in [examples](https://github.com/long2ice/fibers/tree/dev/examples).
+And you can see the code in [examples](https://github.com/long2ice/fibers/tree/dev/examples).
 
 ## Usage
 
@@ -82,8 +82,9 @@ func (t *TestQuery) Handler(c *fiber.Ctx) error {
 #### All supported tags
 
 | name          | description                                                     |
-|---------------|-----------------------------------------------------------------|
+| ------------- | --------------------------------------------------------------- |
 | `query`       | binding query param                                             |
+| `cookie`      | binding cookie param                                            |
 | `form`        | binding body param                                              |
 | `uri`         | binding path param                                              |
 | `header`      | binding header param                                            |
@@ -91,7 +92,7 @@ func (t *TestQuery) Handler(c *fiber.Ctx) error {
 | `description` | swagger docs param description                                  |
 | `example`     | swagger docs param example                                      |
 | `default`     | swagger docs param default value                                |
-| `embed`       | embed struct params                                             |
+| `embed`       | embed struct params or body                                     |
 
 Note that the attributes in `TestQuery`? `Fibers` will validate request and inject it automatically, then you can use it
 in handler easily.

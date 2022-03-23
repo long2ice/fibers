@@ -1,12 +1,13 @@
 package router
 
 import (
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
-	"github.com/long2ice/fibers/constants"
 	"reflect"
 	"strings"
 	_ "unsafe"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/utils"
+	"github.com/long2ice/fibers/constants"
 )
 
 //go:linkname decoderBuilder github.com/gofiber/fiber/v2.decoderBuilder
@@ -52,4 +53,11 @@ func ParamsParser(c *fiber.Ctx, model interface{}) error {
 		params[param] = append(params[param], c.Params(param))
 	}
 	return ParseToStruct(constants.URI, model, params)
+}
+func CookiesParser(c *fiber.Ctx, model interface{}) error {
+	params := make(map[string][]string)
+	c.Request().Header.VisitAllCookie(func(key, value []byte) {
+		params[string(key)] = append(params[string(key)], string(value))
+	})
+	return ParseToStruct(constants.COOKIE, model, params)
 }

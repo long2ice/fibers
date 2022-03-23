@@ -3,12 +3,13 @@ package fibers
 import (
 	"embed"
 	"encoding/json"
+	"net/http"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/template/html"
 	"github.com/long2ice/fibers/router"
 	"github.com/long2ice/fibers/swagger"
-	"net/http"
 )
 
 //go:embed templates/*
