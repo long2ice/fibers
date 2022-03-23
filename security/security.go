@@ -5,19 +5,22 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+type AuthType string
+
 const (
-	Credentials = "credentials"
-	BasicAuth   = "BasicAuth"
-	BearerAuth  = "BearerAuth"
-	ApiKeyAuth  = "ApiKeyAuth"
-	OpenIDAuth  = "OpenIDAuth"
-	OAuth2Auth  = "OAuth2Auth"
+	Credentials          = "credentials"
+	BasicAuth   AuthType = "BasicAuth"
+	BearerAuth  AuthType = "BearerAuth"
+	ApiKeyAuth  AuthType = "ApiKeyAuth"
+	OpenIDAuth  AuthType = "OpenIDAuth"
+	OAuth2Auth  AuthType = "OAuth2Auth"
+	CookieAuth  AuthType = "CookieAuth"
 )
 
 type ISecurity interface {
 	Authorize(c *fiber.Ctx) error
 	Callback(c *fiber.Ctx, credentials interface{})
-	Provider() string
+	Provider() AuthType
 	Scheme() *openapi3.SecurityScheme
 }
 

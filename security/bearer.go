@@ -1,9 +1,10 @@
 package security
 
 import (
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
-	"strings"
 )
 
 type Bearer struct {
@@ -24,7 +25,7 @@ func (b *Bearer) Authorize(c *fiber.Ctx) error {
 		return c.Next()
 	}
 }
-func (b *Bearer) Provider() string {
+func (b *Bearer) Provider() AuthType {
 	return BearerAuth
 }
 

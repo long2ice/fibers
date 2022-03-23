@@ -2,9 +2,10 @@ package security
 
 import (
 	"encoding/base64"
+	"strings"
+
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
-	"strings"
 )
 
 type Basic struct {
@@ -46,7 +47,7 @@ func (b *Basic) Authorize(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
-func (b *Basic) Provider() string {
+func (b *Basic) Provider() AuthType {
 	return BasicAuth
 }
 func (b *Basic) Scheme() *openapi3.SecurityScheme {

@@ -45,7 +45,7 @@ func New(title, description, version string, options ...Option) *Swagger {
 func (swagger *Swagger) getSecurityRequirements(securities []security.ISecurity) *openapi3.SecurityRequirements {
 	securityRequirements := openapi3.NewSecurityRequirements()
 	for _, s := range securities {
-		provide := s.Provider()
+		provide := string(s.Provider())
 		swagger.OpenAPI.Components.SecuritySchemes[provide] = &openapi3.SecuritySchemeRef{
 			Value: s.Scheme(),
 		}

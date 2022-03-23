@@ -19,7 +19,7 @@ func (k *ApiKey) Authorize(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
-func (k *ApiKey) Provider() string {
+func (k *ApiKey) Provider() AuthType {
 	return ApiKeyAuth
 }
 
