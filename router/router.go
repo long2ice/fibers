@@ -90,3 +90,43 @@ func New(api IAPI, options ...Option) *Router {
 	}
 	return r
 }
+func (router *Router) WithSecurity(securities ...security.ISecurity) *Router {
+	Security(securities...)(router)
+	return router
+}
+func (router *Router) WithResponses(response Response) *Router {
+	Responses(response)(router)
+	return router
+}
+func (router *Router) WithHandlers(handlers ...fiber.Handler) *Router {
+	Handlers(handlers...)(router)
+	return router
+}
+func (router *Router) WithTags(tags ...string) *Router {
+	Tags(tags...)(router)
+	return router
+}
+func (router *Router) WithSummary(summary string) *Router {
+	Summary(summary)(router)
+	return router
+}
+func (router *Router) WithDescription(description string) *Router {
+	Description(description)(router)
+	return router
+}
+func (router *Router) WithDeprecated() *Router {
+	Deprecated()(router)
+	return router
+}
+func (router *Router) WithOperationID(ID string) *Router {
+	OperationID(ID)(router)
+	return router
+}
+func (router *Router) WithExclude() *Router {
+	Exclude()(router)
+	return router
+}
+func (router *Router) WithContentType(contentType string, contentTypeType ContentTypeType) *Router {
+	ContentType(contentType, contentTypeType)(router)
+	return router
+}

@@ -455,3 +455,51 @@ func (swagger *Swagger) BuildOpenAPI() {
 func (swagger *Swagger) MarshalJSON() ([]byte, error) {
 	return swagger.OpenAPI.MarshalJSON()
 }
+func (swagger *Swagger) WithDocsUrl(url string) *Swagger {
+	DocsUrl(url)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithRedocUrl(url string) *Swagger {
+	RedocUrl(url)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithTitle(title string) *Swagger {
+	Title(title)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithDescription(description string) *Swagger {
+	Description(description)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithVersion(version string) *Swagger {
+	Version(version)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithOpenAPIUrl(url string) *Swagger {
+	OpenAPIUrl(url)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithTermsOfService(termsOfService string) *Swagger {
+	TermsOfService(termsOfService)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithContact(contact *openapi3.Contact) *Swagger {
+	Contact(contact)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithLicense(license *openapi3.License) *Swagger {
+	License(license)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithServers(servers []*openapi3.Server) *Swagger {
+	Servers(servers)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithSwaggerOptions(options map[string]interface{}) *Swagger {
+	SwaggerOptions(options)(swagger)
+	return swagger
+}
+func (swagger *Swagger) WithRedocOptions(options map[string]interface{}) *Swagger {
+	RedocOptions(options)(swagger)
+	return swagger
+}

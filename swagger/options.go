@@ -2,16 +2,10 @@ package swagger
 
 import (
 	"github.com/getkin/kin-openapi/openapi3"
-	"github.com/long2ice/fibers/router"
 )
 
 type Option func(swagger *Swagger)
 
-func Routers(routers map[string]map[string]*router.Router) Option {
-	return func(swagger *Swagger) {
-		swagger.Routers = routers
-	}
-}
 func DocsUrl(url string) Option {
 	return func(swagger *Swagger) {
 		swagger.DocsUrl = url
