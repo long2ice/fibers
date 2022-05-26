@@ -91,7 +91,6 @@ func (g *App) Options(path string, router *router.Router) {
 }
 
 func (g *App) init() {
-	g.initRouters()
 	if g.Swagger == nil {
 		return
 	}
@@ -128,6 +127,7 @@ func (g *App) init() {
 			"redoc_options": options,
 		})
 	})
+	g.initRouters()
 	g.Swagger.BuildOpenAPI()
 }
 func (g *App) initRouters() {
