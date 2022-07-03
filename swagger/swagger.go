@@ -384,7 +384,7 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 
 // /:id -> /{id}
 func (swagger *Swagger) fixPath(path string) string {
-	reg := regexp.MustCompile("/:([0-9a-zA-Z]+)")
+	reg := regexp.MustCompile("/:(\\w+)")
 	return reg.ReplaceAllString(path, "/{${1}}")
 }
 func (swagger *Swagger) getPaths() openapi3.Paths {
