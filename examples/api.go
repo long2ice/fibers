@@ -57,6 +57,17 @@ func (t *TestForm) Handler(c *fiber.Ctx) error {
 	return c.JSON(t)
 }
 
+type TestJson struct {
+	ID   int    `query:"id" validate:"required" json:"id" description:"id of model" example:"1"`
+	Name string `json:"name" validate:"required"  description:"name of model" example:"test"`
+	List []int  `json:"list" validate:"required"  description:"list of model"`
+	Enum string `json:"enum" validate:"required,oneof=1 2"  description:"enum of model" example:"1"`
+}
+
+func (t *TestJson) Handler(c *fiber.Ctx) error {
+	return c.JSON(t)
+}
+
 type TestNoModel struct {
 	C string `cookie:"c" validate:"required" json:"cookie" description:"cookie is not supported in try it out of swagger ui" example:"test"`
 }

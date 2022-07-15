@@ -6,4 +6,5 @@ const (
 	URI    = "uri"
 	HEADER = "header"
 	COOKIE = "cookie"
+	JSON   = "json"
 )

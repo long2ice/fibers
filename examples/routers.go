@@ -57,7 +57,7 @@ var (
 		router.ContentType(fiber.MIMEApplicationForm, router.ContentTypeRequest),
 	)
 	body = router.New(
-		&TestForm{},
+		&TestJson{},
 		router.Summary("Test json body"),
 		router.Responses(router.Response{
 			"200": router.ResponseItem{

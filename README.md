@@ -5,7 +5,8 @@
 
 ## Introduction
 
-`Fibers` is a web framework based on `Fiber` and `Swagger` inspired by [FastAPI](https://github.com/tiangolo/fastapi), which wraps `Fiber` and provides built-in swagger api docs
+`Fibers` is a web framework based on `Fiber` and `Swagger` inspired by [FastAPI](https://github.com/tiangolo/fastapi),
+which wraps `Fiber` and provides built-in swagger api docs
 and request model validation.
 
 ## Why I build this project?
@@ -82,10 +83,11 @@ func (t *TestQuery) Handler(c *fiber.Ctx) error {
 #### All supported tags
 
 | name          | description                                                     |
-| ------------- | --------------------------------------------------------------- |
+|---------------|-----------------------------------------------------------------|
 | `query`       | binding query param                                             |
 | `cookie`      | binding cookie param                                            |
-| `form`        | binding body param                                              |
+| `form`        | binding form param                                              |
+| `json`        | binding json body                                               |
 | `uri`         | binding path param                                              |
 | `header`      | binding header param                                            |
 | `validate`    | [validator](https://github.com/go-playground/validator) support |

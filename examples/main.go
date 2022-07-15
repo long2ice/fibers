@@ -50,10 +50,10 @@ func main() {
 
 	app.Get("/noModel", noModel)
 
-	formGroup := app.Group("/form", fibers.Tags("Form"), fibers.Security(&security.Bearer{}))
-	formGroup.Post("/encoded", formEncode)
-	formGroup.Put("", body)
-	formGroup.Post("/file", file)
+	bodyGroup := app.Group("/body", fibers.Tags("Body"), fibers.Security(&security.Bearer{}))
+	bodyGroup.Post("/encoded", formEncode)
+	bodyGroup.Post("/file", file)
+	bodyGroup.Post("/json", body)
 
 	log.Fatal(app.Listen(":8080"))
 }

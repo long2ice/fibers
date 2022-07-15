@@ -133,7 +133,10 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 			}
 			tag, err := tags.Get(constants.FORM)
 			if err != nil {
-				continue
+				tag, err = tags.Get(constants.JSON)
+				if err != nil {
+					continue
+				}
 			}
 			fieldSchema := swagger.getSchemaByType(value.Interface(), true)
 			schema.Properties[tag.Name] = openapi3.NewSchemaRef("", fieldSchema)
