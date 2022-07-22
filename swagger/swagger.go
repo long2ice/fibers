@@ -167,7 +167,7 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 	} else if type_.Kind() == reflect.Slice {
 		schema = openapi3.NewArraySchema()
 		schema.Items = &openapi3.SchemaRef{Value: swagger.getRequestSchemaByModel(reflect.New(type_.Elem()).Elem().Interface())}
-	} else {
+	} else if type_.Kind() != reflect.Map {
 		schema = swagger.getSchemaByType(model, true)
 	}
 	return schema
@@ -244,7 +244,7 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 	} else if type_.Kind() == reflect.Slice {
 		schema = openapi3.NewArraySchema()
 		schema.Items = &openapi3.SchemaRef{Value: swagger.getResponseSchemaByModel(reflect.New(type_.Elem()).Elem().Interface())}
-	} else {
+	} else if type_.Kind() != reflect.Map {
 		schema = swagger.getSchemaByType(model, false)
 	}
 	return schema
