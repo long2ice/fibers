@@ -68,7 +68,7 @@ func NewSwagger() *swagger.Swagger {
 
 ### Write API
 
-Then make api struct which implement `router.IAPI`.
+Then make func which is type `F func(c *fiber.Ctx, req T) error`.
 
 ```go
 package examples
