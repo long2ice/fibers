@@ -14,11 +14,13 @@ func Security(securities ...security.ISecurity) Option {
 		}
 	}
 }
+
 func Responses(response Response) Option {
 	return func(router *Router) {
 		router.Response = response
 	}
 }
+
 func Handlers(handlers ...fiber.Handler) Option {
 	return func(router *Router) {
 		for _, handler := range handlers {
@@ -26,6 +28,7 @@ func Handlers(handlers ...fiber.Handler) Option {
 		}
 	}
 }
+
 func Tags(tags ...string) Option {
 	return func(router *Router) {
 		if router.Tags == nil {
@@ -35,11 +38,13 @@ func Tags(tags ...string) Option {
 		}
 	}
 }
+
 func Summary(summary string) Option {
 	return func(router *Router) {
 		router.Summary = summary
 	}
 }
+
 func Description(description string) Option {
 	return func(router *Router) {
 		router.Description = description
@@ -52,6 +57,7 @@ func Deprecated() Option {
 		router.Deprecated = true
 	}
 }
+
 func OperationID(ID string) Option {
 	return func(router *Router) {
 		router.OperationID = ID

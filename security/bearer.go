@@ -25,6 +25,7 @@ func (b *Bearer) Authorize(c *fiber.Ctx) error {
 		return c.Next()
 	}
 }
+
 func (b *Bearer) Provider() AuthType {
 	return BearerAuth
 }

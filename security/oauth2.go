@@ -16,6 +16,7 @@ type OAuth2 struct {
 func (i *OAuth2) Authorize(c *fiber.Ctx) error {
 	return nil
 }
+
 func (i *OAuth2) Provider() AuthType {
 	return OAuth2Auth
 }

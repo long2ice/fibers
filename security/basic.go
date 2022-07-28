@@ -20,6 +20,7 @@ type User struct {
 func decode(s string) ([]byte, error) {
 	return base64.StdEncoding.DecodeString(s)
 }
+
 func (b *Basic) parseBasicAuth(c *fiber.Ctx) (User, error) {
 	var user User
 	auth := c.Get(fiber.HeaderAuthorization)
@@ -38,6 +39,7 @@ func (b *Basic) parseBasicAuth(c *fiber.Ctx) (User, error) {
 	user.Password = credentials[1]
 	return user, nil
 }
+
 func (b *Basic) Authorize(c *fiber.Ctx) error {
 	user, err := b.parseBasicAuth(c)
 	if err != nil {
@@ -47,9 +49,11 @@ func (b *Basic) Authorize(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
+
 func (b *Basic) Provider() AuthType {
 	return BasicAuth
 }
+
 func (b *Basic) Scheme() *openapi3.SecurityScheme {
 	return &openapi3.SecurityScheme{
 		Type:   "http",

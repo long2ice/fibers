@@ -11,76 +11,76 @@ import (
 type TokenHeader struct {
 	Token string `header:"token" validate:"required" json:"token" example:"test"`
 }
-type TestQuery struct {
-	TokenHeader `embed:""`
-	Name        string `query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
-	Enum        string `query:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" example:"1"`
-	Optional    string `query:"optional" json:"optional"`
+type TestQueryReq struct {
+	TokenHeader `       embed:""`
+	Name        string `         query:"name"     validate:"required"           json:"name"     description:"name of model" example:"test"`
+	Enum        string `         query:"enum"     validate:"required,oneof=1 2" json:"enum"     description:"enum of model" example:"1"`
+	Optional    string `         query:"optional"                               json:"optional"`
 }
 
-func (t *TestQuery) Handler(c *fiber.Ctx) error {
+func TestQuery(c *fiber.Ctx, req TestQueryReq) error {
 	user := c.Locals(security.Credentials).(security.User)
 	fmt.Println(user)
-	return c.JSON(t)
+	return c.JSON(req)
 }
 
-type TestQueryList struct {
-	TokenHeader `embed:""`
-	Name        string `query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
+type TestQueryListReq struct {
+	TokenHeader `       embed:""`
+	Name        string `         query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
 }
 
-func (t *TestQueryList) Handler(c *fiber.Ctx) error {
+func TestQueryList(c *fiber.Ctx, req TestQueryListReq) error {
 	user := c.Locals(security.Credentials).(security.User)
 	fmt.Println(user)
-	return c.JSON([]TestQueryList{*t})
+	return c.JSON([]TestQueryListReq{req})
 }
 
-type TestQueryPath struct {
-	Name  string `query:"name" validate:"required" json:"name" description:"name of model" example:"test"`
-	ID    int    `uri:"id" validate:"required" json:"id" description:"id of model" example:"1"`
-	Token string `header:"token" validate:"required" json:"token" example:"test"`
+type TestQueryPathReq struct {
+	Name  string `query:"name" validate:"required" json:"name"  description:"name of model" example:"test"`
+	ID    int    `             validate:"required" json:"id"    description:"id of model"   example:"1"    uri:"id"`
+	Token string `             validate:"required" json:"token"                             example:"test"          header:"token"`
 }
 
-func (t *TestQueryPath) Handler(c *fiber.Ctx) error {
-	return c.JSON(t)
+func TestQueryPath(c *fiber.Ctx, req TestQueryPathReq) error {
+	return c.JSON(req)
 }
 
-type TestForm struct {
-	ID   int    `query:"id" validate:"required" json:"id" description:"id of model" example:"1"`
-	Name string `form:"name" validate:"required" json:"name" description:"name of model" example:"test"`
-	List []int  `form:"list" validate:"required" json:"list" description:"list of model"`
-	Enum string `form:"enum" validate:"required,oneof=1 2" json:"enum" description:"enum of model" example:"1"`
+type TestFormReq struct {
+	ID   int    `query:"id" validate:"required"           json:"id"   description:"id of model"   example:"1"`
+	Name string `           validate:"required"           json:"name" description:"name of model" example:"test" form:"name"`
+	List []int  `           validate:"required"           json:"list" description:"list of model"                form:"list"`
+	Enum string `           validate:"required,oneof=1 2" json:"enum" description:"enum of model" example:"1"    form:"enum"`
 }
 
-func (t *TestForm) Handler(c *fiber.Ctx) error {
-	fmt.Println(t)
-	return c.JSON(t)
+func TestForm(c *fiber.Ctx, req TestFormReq) error {
+	fmt.Println(req)
+	return c.JSON(req)
 }
 
-type TestJson struct {
-	ID   int    `query:"id" validate:"required" json:"id" description:"id of model" example:"1"`
-	Name string `json:"name" validate:"required"  description:"name of model" example:"test"`
-	List []int  `json:"list" validate:"required"  description:"list of model"`
-	Enum string `json:"enum" validate:"required,oneof=1 2"  description:"enum of model" example:"1"`
+type TestJsonReq struct {
+	ID   int    `query:"id" validate:"required"           json:"id"   description:"id of model"   example:"1"`
+	Name string `           validate:"required"           json:"name" description:"name of model" example:"test"`
+	List []int  `           validate:"required"           json:"list" description:"list of model"`
+	Enum string `           validate:"required,oneof=1 2" json:"enum" description:"enum of model" example:"1"`
 }
 
-func (t *TestJson) Handler(c *fiber.Ctx) error {
-	return c.JSON(t)
+func TestJson(c *fiber.Ctx, req TestJsonReq) error {
+	return c.JSON(req)
 }
 
-type TestNoModel struct {
+type TestNoModelReq struct {
 	C string `cookie:"c" validate:"required" json:"cookie" description:"cookie is not supported in try it out of swagger ui" example:"test"`
 }
 
-func (t *TestNoModel) Handler(c *fiber.Ctx) error {
-	return c.JSON(t)
+func TestNoModel(c *fiber.Ctx, req TestNoModelReq) error {
+	return c.JSON(req)
 }
 
-type TestFile struct {
+type TestFileReq struct {
 	File *multipart.FileHeader `form:"file" validate:"required" description:"file upload"`
 }
 
-func (t *TestFile) Handler(c *fiber.Ctx) error {
-	fmt.Println(fiber.Map{"file": t.File.Filename})
-	return c.JSON(fiber.Map{"file": t.File.Filename})
+func TestFile(c *fiber.Ctx, req TestFileReq) error {
+	fmt.Println(fiber.Map{"file": req.File.Filename})
+	return c.JSON(fiber.Map{"file": req.File.Filename})
 }

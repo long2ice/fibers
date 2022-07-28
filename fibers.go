@@ -26,7 +26,12 @@ type App struct {
 func New(swagger *swagger.Swagger, config fiber.Config) *App {
 	engine := html.NewFileSystem(http.FS(templates), ".html")
 	config.Views = engine
-	f := &App{App: fiber.New(config), Swagger: swagger, Routers: make(map[string]map[string]*router.Router), subApps: make(map[string]*App)}
+	f := &App{
+		App:     fiber.New(config),
+		Swagger: swagger,
+		Routers: make(map[string]map[string]*router.Router),
+		subApps: make(map[string]*App),
+	}
 	if swagger != nil {
 		swagger.Routers = f.Routers
 	}
@@ -130,6 +135,7 @@ func (g *App) init() {
 	g.initRouters()
 	g.Swagger.BuildOpenAPI()
 }
+
 func (g *App) initRouters() {
 	for path, m := range g.Routers {
 		path = g.fullPath(path)
@@ -155,15 +161,18 @@ func (g *App) initRouters() {
 		}
 	}
 }
+
 func (g *App) fullPath(path string) string {
 	return g.rootPath + path
 }
+
 func (g *App) Init() {
 	g.init()
 	for _, s := range g.subApps {
 		s.init()
 	}
 }
+
 func (g *App) Listen(addr string) error {
 	g.Init()
 	return g.App.Listen(addr)

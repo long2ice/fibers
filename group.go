@@ -49,6 +49,7 @@ func (g *Group) Handle(path string, method string, r *router.Router) {
 	router.Security(g.Securities...)(r)
 	g.App.Handle(g.Path+path, method, r)
 }
+
 func (g *Group) Get(path string, router *router.Router) {
 	g.Handle(path, http.MethodGet, router)
 }

@@ -21,7 +21,9 @@ func ParseToStruct(aliasTag string, out interface{}, data map[string][]string) e
 		SetAliasTag:       aliasTag,
 		IgnoreUnknownKeys: true,
 	})
-	result := reflect.ValueOf(decoder).MethodByName("Decode").Call([]reflect.Value{reflect.ValueOf(out), reflect.ValueOf(data)})
+	result := reflect.ValueOf(decoder).
+		MethodByName("Decode").
+		Call([]reflect.Value{reflect.ValueOf(out), reflect.ValueOf(data)})
 	switch result[0].Interface().(type) {
 	case error:
 		return result[0].Interface().(error)
@@ -30,6 +32,7 @@ func ParseToStruct(aliasTag string, out interface{}, data map[string][]string) e
 	}
 	return nil
 }
+
 func HeaderParser(c *fiber.Ctx, model interface{}) error {
 	headerData := make(map[string][]string)
 	c.Request().Header.VisitAll(func(key, val []byte) {
@@ -43,10 +46,10 @@ func HeaderParser(c *fiber.Ctx, model interface{}) error {
 		} else {
 			headerData[k] = append(headerData[k], v)
 		}
-
 	})
 	return ParseToStruct(constants.HEADER, model, headerData)
 }
+
 func ParamsParser(c *fiber.Ctx, model interface{}) error {
 	params := make(map[string][]string)
 	for _, param := range c.Route().Params {
@@ -54,6 +57,7 @@ func ParamsParser(c *fiber.Ctx, model interface{}) error {
 	}
 	return ParseToStruct(constants.URI, model, params)
 }
+
 func CookiesParser(c *fiber.Ctx, model interface{}) error {
 	params := make(map[string][]string)
 	c.Request().Header.VisitAllCookie(func(key, value []byte) {

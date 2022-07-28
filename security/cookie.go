@@ -19,6 +19,7 @@ func (k *Cookie) Authorize(c *fiber.Ctx) error {
 	}
 	return c.Next()
 }
+
 func (k *Cookie) Provider() AuthType {
 	return CookieAuth
 }

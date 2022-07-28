@@ -36,13 +36,23 @@ type Swagger struct {
 }
 
 func New(title, description, version string, options ...Option) *Swagger {
-	swagger := &Swagger{Title: title, Description: description, Version: version, DocsUrl: "/docs", RedocUrl: "/redoc", OpenAPIUrl: "/openapi.json"}
+	swagger := &Swagger{
+		Title:       title,
+		Description: description,
+		Version:     version,
+		DocsUrl:     "/docs",
+		RedocUrl:    "/redoc",
+		OpenAPIUrl:  "/openapi.json",
+	}
 	for _, option := range options {
 		option(swagger)
 	}
 	return swagger
 }
-func (swagger *Swagger) getSecurityRequirements(securities []security.ISecurity) *openapi3.SecurityRequirements {
+
+func (swagger *Swagger) getSecurityRequirements(
+	securities []security.ISecurity,
+) *openapi3.SecurityRequirements {
 	securityRequirements := openapi3.NewSecurityRequirements()
 	for _, s := range securities {
 		provide := string(s.Provider())
@@ -53,6 +63,7 @@ func (swagger *Swagger) getSecurityRequirements(securities []security.ISecurity)
 	}
 	return securityRequirements
 }
+
 func (swagger *Swagger) getSchemaByType(t interface{}, request bool) *openapi3.Schema {
 	var schema *openapi3.Schema
 	var m float64
@@ -103,6 +114,7 @@ func (swagger *Swagger) getSchemaByType(t interface{}, request bool) *openapi3.S
 	}
 	return schema
 }
+
 func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Schema {
 	type_ := reflect.TypeOf(model)
 	value_ := reflect.ValueOf(model)
@@ -147,7 +159,10 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 				}
 				options := validateTag.Options
 				if len(options) > 0 {
-					schema.Properties[tag.Name] = swagger.getValidateSchemaByOptions(value.Interface(), options)
+					schema.Properties[tag.Name] = swagger.getValidateSchemaByOptions(
+						value.Interface(),
+						options,
+					)
 					fieldSchema = schema.Properties[tag.Name].Value
 				}
 			}
@@ -172,7 +187,11 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 	}
 	return schema
 }
-func (swagger *Swagger) getRequestBodyByModel(model interface{}, contentType string) *openapi3.RequestBodyRef {
+
+func (swagger *Swagger) getRequestBodyByModel(
+	model interface{},
+	contentType string,
+) *openapi3.RequestBodyRef {
 	body := &openapi3.RequestBodyRef{
 		Value: openapi3.NewRequestBody(),
 	}
@@ -187,6 +206,7 @@ func (swagger *Swagger) getRequestBodyByModel(model interface{}, contentType str
 	body.Value.Content = openapi3.NewContentWithSchema(schema, []string{contentType})
 	return body
 }
+
 func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Schema {
 	schema := openapi3.NewObjectSchema()
 	if model == nil {
@@ -249,7 +269,11 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 	}
 	return schema
 }
-func (swagger *Swagger) getResponses(response router.Response, contentType string) openapi3.Responses {
+
+func (swagger *Swagger) getResponses(
+	response router.Response,
+	contentType string,
+) openapi3.Responses {
 	ret := openapi3.NewResponses()
 	for k, v := range response {
 		schema := swagger.getResponseSchemaByModel(v.Model)
@@ -270,7 +294,11 @@ func (swagger *Swagger) getResponses(response router.Response, contentType strin
 	}
 	return ret
 }
-func (swagger *Swagger) getValidateSchemaByOptions(value interface{}, options []string) *openapi3.SchemaRef {
+
+func (swagger *Swagger) getValidateSchemaByOptions(
+	value interface{},
+	options []string,
+) *openapi3.SchemaRef {
 	schema := openapi3.NewSchemaRef("", swagger.getSchemaByType(value, true))
 	for _, option := range options {
 		if strings.HasPrefix(option, "oneof=") {
@@ -305,6 +333,7 @@ func (swagger *Swagger) getValidateSchemaByOptions(value interface{}, options []
 	}
 	return schema
 }
+
 func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Parameters {
 	parameters := openapi3.NewParameters()
 	if model == nil {
@@ -390,6 +419,7 @@ func (swagger *Swagger) fixPath(path string) string {
 	reg := regexp.MustCompile("/:(\\w+)")
 	return reg.ReplaceAllString(path, "/{${1}}")
 }
+
 func (swagger *Swagger) getPaths() openapi3.Paths {
 	paths := make(openapi3.Paths)
 	for path, m := range swagger.Routers {
@@ -398,7 +428,7 @@ func (swagger *Swagger) getPaths() openapi3.Paths {
 			if r.Exclude {
 				continue
 			}
-			model := r.API
+			model := r.Model
 			operation := &openapi3.Operation{
 				Tags:        r.Tags,
 				OperationID: r.OperationID,
@@ -436,6 +466,7 @@ func (swagger *Swagger) getPaths() openapi3.Paths {
 	}
 	return paths
 }
+
 func (swagger *Swagger) BuildOpenAPI() {
 	components := openapi3.NewComponents()
 	components.SecuritySchemes = openapi3.SecuritySchemes{}
@@ -458,50 +489,62 @@ func (swagger *Swagger) BuildOpenAPI() {
 func (swagger *Swagger) MarshalJSON() ([]byte, error) {
 	return swagger.OpenAPI.MarshalJSON()
 }
+
 func (swagger *Swagger) WithDocsUrl(url string) *Swagger {
 	DocsUrl(url)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithRedocUrl(url string) *Swagger {
 	RedocUrl(url)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithTitle(title string) *Swagger {
 	Title(title)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithDescription(description string) *Swagger {
 	Description(description)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithVersion(version string) *Swagger {
 	Version(version)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithOpenAPIUrl(url string) *Swagger {
 	OpenAPIUrl(url)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithTermsOfService(termsOfService string) *Swagger {
 	TermsOfService(termsOfService)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithContact(contact *openapi3.Contact) *Swagger {
 	Contact(contact)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithLicense(license *openapi3.License) *Swagger {
 	License(license)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithServers(servers []*openapi3.Server) *Swagger {
 	Servers(servers)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithSwaggerOptions(options map[string]interface{}) *Swagger {
 	SwaggerOptions(options)(swagger)
 	return swagger
 }
+
 func (swagger *Swagger) WithRedocOptions(options map[string]interface{}) *Swagger {
 	RedocOptions(options)(swagger)
 	return swagger

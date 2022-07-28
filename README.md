@@ -17,6 +17,10 @@ generation and api writing, because nobody like writing api docs.
 Now I use `Fiber` but I can't found anything like that, I found [swag](https://github.com/swaggo/swag) but which write
 docs with comment is so stupid. So there is `Fibers`.
 
+## Requirements
+
+- Go >= 1.18, because of generic usage.
+
 ## Installation
 
 ```shell
@@ -71,12 +75,12 @@ package examples
 
 import "github.com/gofiber/fiber/v2"
 
-type TestQuery struct {
+type TestQueryReq struct {
   Name string `query:"name" validate:"required" json:"name" description:"name of model" default:"test"`
 }
 
-func (t *TestQuery) Handler(c *fiber.Ctx) error {
-  return c.JSON(t)
+func TestQuery(c *fiber.Ctx, req TestQueryReq) error {
+  return c.JSON(req)
 }
 ```
 
@@ -107,7 +111,7 @@ Then write router with some docs configuration and api.
 package examples
 
 var query = router.New(
-  &TestQuery{},
+  TestQuery,
   router.Summary("Test Query"),
   router.Description("Test Query Model"),
   router.Tags("Test"),
@@ -130,7 +134,7 @@ Current there is five kinds of security policies.
 package main
 
 var query = router.New(
-  &TestQuery{},
+  TestQuery,
   router.Summary("Test query"),
   router.Description("Test query model"),
   router.Security(&security.Basic{}),
@@ -144,10 +148,10 @@ package main
 
 import "github.com/gofiber/fiber/v2"
 
-func (t *TestQuery) Handler(c *fiber.Ctx) error {
+func TestQuery(c *fiber.Ctx, req TestQueryReq) error {
   user := c.Locals(security.Credentials).(security.User)
   fmt.Println(user)
-  return c.JSON(t)
+  return c.JSON(req)
 }
 ```
 
