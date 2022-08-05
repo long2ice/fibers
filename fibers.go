@@ -3,6 +3,7 @@ package fibers
 import (
 	"embed"
 	"encoding/json"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 
 	"github.com/getkin/kin-openapi/openapi3"
@@ -100,18 +101,18 @@ func (g *App) init() {
 		return
 	}
 	g.App.Get(g.fullPath(g.Swagger.OpenAPIUrl), func(c *fiber.Ctx) error {
-		return c.JSON(g.Swagger)
+		return c.Status(200).JSON(g.Swagger)
 	})
 	g.App.Get(g.fullPath(g.Swagger.DocsUrl), func(c *fiber.Ctx) error {
 		options := `{}`
 		if g.Swagger.SwaggerOptions != nil {
 			data, err := json.Marshal(g.Swagger.SwaggerOptions)
 			if err != nil {
-				panic(err)
+				log.Panic(err)
 			}
 			options = string(data)
 		}
-		return c.Render("templates/swagger", fiber.Map{
+		return c.Status(200).Render("templates/swagger", fiber.Map{
 			"openapi_url":     g.fullPath(g.Swagger.OpenAPIUrl),
 			"title":           g.Swagger.Title,
 			"swagger_options": options,
@@ -122,11 +123,11 @@ func (g *App) init() {
 		if g.Swagger.RedocOptions != nil {
 			data, err := json.Marshal(g.Swagger.RedocOptions)
 			if err != nil {
-				panic(err)
+				log.Panic(err)
 			}
 			options = string(data)
 		}
-		return c.Render("templates/redoc", fiber.Map{
+		return c.Status(200).Render("templates/redoc", fiber.Map{
 			"openapi_url":   g.fullPath(g.Swagger.OpenAPIUrl),
 			"title":         g.Swagger.Title,
 			"redoc_options": options,
