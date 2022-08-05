@@ -18,10 +18,12 @@ var templates embed.FS
 
 type App struct {
 	*fiber.App
-	Swagger  *swagger.Swagger
-	Routers  map[string]map[string]*router.Router
-	subApps  map[string]*App
-	rootPath string
+	Swagger        *swagger.Swagger
+	Routers        map[string]map[string]*router.Router
+	subApps        map[string]*App
+	rootPath       string
+	beforeInitFunc func()
+	afterInitFunc  func()
 }
 
 func New(swagger *swagger.Swagger, config fiber.Config) *App {
@@ -101,7 +103,7 @@ func (g *App) init() {
 		return
 	}
 	g.App.Get(g.fullPath(g.Swagger.OpenAPIUrl), func(c *fiber.Ctx) error {
-		return c.Status(200).JSON(g.Swagger)
+		return c.JSON(g.Swagger)
 	})
 	g.App.Get(g.fullPath(g.Swagger.DocsUrl), func(c *fiber.Ctx) error {
 		options := `{}`
@@ -112,7 +114,7 @@ func (g *App) init() {
 			}
 			options = string(data)
 		}
-		return c.Status(200).Render("templates/swagger", fiber.Map{
+		return c.Render("templates/swagger", fiber.Map{
 			"openapi_url":     g.fullPath(g.Swagger.OpenAPIUrl),
 			"title":           g.Swagger.Title,
 			"swagger_options": options,
@@ -127,7 +129,7 @@ func (g *App) init() {
 			}
 			options = string(data)
 		}
-		return c.Status(200).Render("templates/redoc", fiber.Map{
+		return c.Render("templates/redoc", fiber.Map{
 			"openapi_url":   g.fullPath(g.Swagger.OpenAPIUrl),
 			"title":         g.Swagger.Title,
 			"redoc_options": options,
@@ -173,8 +175,19 @@ func (g *App) Init() {
 		s.init()
 	}
 }
-
+func (g *App) BeforeInit(f func()) {
+	g.beforeInitFunc = f
+}
+func (g *App) AfterInit(f func()) {
+	g.afterInitFunc = f
+}
 func (g *App) Listen(addr string) error {
+	if g.beforeInitFunc != nil {
+		g.beforeInitFunc()
+	}
 	g.Init()
+	if g.afterInitFunc != nil {
+		g.afterInitFunc()
+	}
 	return g.App.Listen(addr)
 }
