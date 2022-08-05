@@ -77,7 +77,19 @@ func (router *Router) GetHandlers() []fiber.Handler {
 	handlers = append(handlers, router.API)
 	return handlers
 }
-
+func NewX(f fiber.Handler, options ...Option) *Router {
+	r := &Router{
+		Handlers: list.New(),
+		Response: make(Response),
+		API: func(ctx *fiber.Ctx) error {
+			return f(ctx)
+		},
+	}
+	for _, option := range options {
+		option(r)
+	}
+	return r
+}
 func New[T Model, F func(c *fiber.Ctx, req T) error](f F, options ...Option) *Router {
 	var model T
 	h := BindModel(&model)

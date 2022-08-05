@@ -68,12 +68,8 @@ func TestJson(c *fiber.Ctx, req TestJsonReq) error {
 	return c.JSON(req)
 }
 
-type TestNoModelReq struct {
-	C string `cookie:"c" validate:"required" json:"cookie" description:"cookie is not supported in try it out of swagger ui" example:"test"`
-}
-
-func TestNoModel(c *fiber.Ctx, req TestNoModelReq) error {
-	return c.JSON(req)
+func TestNoModel(c *fiber.Ctx) error {
+	return c.SendString("no model")
 }
 
 type TestFileReq struct {

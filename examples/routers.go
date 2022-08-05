@@ -31,7 +31,7 @@ var (
 			},
 		}),
 	)
-	noModel = router.New(
+	noModel = router.NewX(
 		TestNoModel,
 		router.Summary("Test no model"),
 		router.Description("Test no model"),

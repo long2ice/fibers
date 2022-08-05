@@ -82,6 +82,11 @@ type TestQueryReq struct {
 func TestQuery(c *fiber.Ctx, req TestQueryReq) error {
   return c.JSON(req)
 }
+
+// TestQueryNoReq if there is no req body
+func TestQueryNoReq(c *fiber.Ctx) error {
+  return c.SendString("xxx")
+}
 ```
 
 #### All supported tags
@@ -112,6 +117,14 @@ package examples
 
 var query = router.New(
   TestQuery,
+  router.Summary("Test Query"),
+  router.Description("Test Query Model"),
+  router.Tags("Test"),
+)
+
+// if there is no req body
+var query = router.NewX(
+  TestQueryNoReq,
   router.Summary("Test Query"),
   router.Description("Test Query Model"),
   router.Tags("Test"),
