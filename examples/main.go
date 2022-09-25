@@ -1,9 +1,8 @@
 package main
 
 import (
-	"log"
-
 	"github.com/long2ice/fibers/security"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"

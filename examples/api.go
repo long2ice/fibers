@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/google/uuid"
 	"mime/multipart"
 
 	"github.com/gofiber/fiber/v2"
@@ -36,9 +37,10 @@ func TestQueryList(c *fiber.Ctx, req TestQueryListReq) error {
 }
 
 type TestQueryPathReq struct {
-	Name  string `query:"name" validate:"required" json:"name"  description:"name of model" example:"test"`
-	ID    int    `             validate:"required" json:"id"    description:"id of model"   example:"1"    uri:"id"`
-	Token string `             validate:"required" json:"token"                             example:"test"          header:"token"`
+	Name  string    `query:"name" validate:"required" json:"name"  description:"name of model" example:"test"`
+	ID    int       `             validate:"required" json:"id"    description:"id of model"   example:"1"    uri:"id"`
+	UUID  uuid.UUID `query:"uuid" validate:"required" json:"uuid" description:"uuid of model"`
+	Token string    `             validate:"required" json:"token"                             example:"test"          header:"token"`
 }
 
 func TestQueryPath(c *fiber.Ctx, req TestQueryPathReq) error {

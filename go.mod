@@ -8,6 +8,7 @@ require (
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/gofiber/fiber/v2 v2.34.1
 	github.com/gofiber/template v1.6.28
+	github.com/google/uuid v1.1.2
 	github.com/jinzhu/copier v0.3.5
 	github.com/mcuadros/go-defaults v1.2.0
 	github.com/sirupsen/logrus v1.8.1

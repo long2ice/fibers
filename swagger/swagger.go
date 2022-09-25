@@ -1,6 +1,7 @@
 package swagger
 
 import (
+	"github.com/google/uuid"
 	"mime/multipart"
 	"net/http"
 	"reflect"
@@ -88,6 +89,8 @@ func (swagger *Swagger) getSchemaByType(t interface{}, request bool) *openapi3.S
 		schema = openapi3.NewStringSchema()
 	case time.Time:
 		schema = openapi3.NewDateTimeSchema()
+	case uuid.UUID:
+		schema = openapi3.NewUUIDSchema()
 	case float32, float64:
 		schema = openapi3.NewFloat64Schema()
 	case bool:
