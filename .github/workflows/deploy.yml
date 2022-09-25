@@ -29,6 +29,6 @@ jobs:
           key: ${{ secrets.KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            cd /root/fibers
-            docker-compose pull
-            docker-compose up -d
+            cd /root/docker/fibers
+            docker compose pull
+            docker compose up -d
