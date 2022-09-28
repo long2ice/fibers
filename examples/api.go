@@ -41,6 +41,7 @@ type TestQueryPathReq struct {
 	ID    int       `             validate:"required" json:"id"    description:"id of model"   example:"1"    uri:"id"`
 	UUID  uuid.UUID `query:"uuid" validate:"required" json:"uuid" description:"uuid of model"`
 	Token string    `             validate:"required" json:"token"                             example:"test"          header:"token"`
+	Num   *int      `query:"num"  example:"1"`
 }
 
 func TestQueryPath(c *fiber.Ctx, req TestQueryPathReq) error {

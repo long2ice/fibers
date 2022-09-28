@@ -70,30 +70,30 @@ func (swagger *Swagger) getSchemaByType(t interface{}, request bool) *openapi3.S
 	var m float64
 	m = float64(0)
 	switch t.(type) {
-	case int, int8, int16:
+	case int, int8, int16, *int, *int8, *int16:
 		schema = openapi3.NewIntegerSchema()
-	case uint, uint8, uint16:
+	case uint, uint8, uint16, *uint, *uint8, *uint16:
 		schema = openapi3.NewIntegerSchema()
 		schema.Min = &m
-	case int32:
+	case int32, *int32:
 		schema = openapi3.NewInt32Schema()
-	case uint32:
+	case uint32, *uint32:
 		schema = openapi3.NewInt32Schema()
 		schema.Min = &m
-	case int64:
+	case int64, *int64:
 		schema = openapi3.NewInt64Schema()
-	case uint64:
+	case uint64, *uint64:
 		schema = openapi3.NewInt64Schema()
 		schema.Min = &m
-	case string:
+	case string, *string:
 		schema = openapi3.NewStringSchema()
-	case time.Time:
+	case time.Time, *time.Time:
 		schema = openapi3.NewDateTimeSchema()
-	case uuid.UUID:
+	case uuid.UUID, *uuid.UUID:
 		schema = openapi3.NewUUIDSchema()
-	case float32, float64:
+	case float32, float64, *float32, *float64:
 		schema = openapi3.NewFloat64Schema()
-	case bool:
+	case bool, *bool:
 		schema = openapi3.NewBoolSchema()
 	case []byte:
 		schema = openapi3.NewBytesSchema()
@@ -134,7 +134,7 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 			value := value_.Field(i)
 			tags, err := structtag.Parse(string(field.Tag))
 			if err != nil {
-				panic(err)
+				log.Fatal(err)
 			}
 			_, err = tags.Get(constants.EMBED)
 			if err == nil {
