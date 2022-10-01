@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fibers
+spec:
+  selector:
+    matchLabels:
+      app: fibers
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fibers
+    spec:
+      containers:
+        - name: fibers
+          image: ghcr.io/long2ice/fibers/fibers
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              name: fibers
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: http
+spec:
+  selector:
+    app: fibers
+  ports:
+    - protocol: TCP
+      name: http
+      port: 80
+      targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: fibers
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+spec:
+  tls:
+    - hosts:
+        - fibers.long2ice.io
+      secretName: fibers.long2ice.io
+  rules:
+    - host: fibers.long2ice.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: http
+                port:
+                  name: http
