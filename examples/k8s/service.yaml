@@ -3,11 +3,10 @@ kind: Service
 metadata:
   name: http
 spec:
-  type: LoadBalancer
   selector:
     app: fibers
   ports:
     - protocol: TCP
       name: http
-      port: 8080
-      targetPort: fibers
+      port: 80
+      targetPort: 8080

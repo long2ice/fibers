@@ -13,4 +13,4 @@ spec:
               service:
                 name: http
                 port:
-                  number: 80
+                  name: http
