@@ -15,7 +15,7 @@ spec:
       containers:
         - name: fibers
           image: ghcr.io/long2ice/fibers/fibers
-          imagePullPolicy: IfNotPresent
+          imagePullPolicy: Always
           ports:
             - containerPort: 8080
               name: fibers
