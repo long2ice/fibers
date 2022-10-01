@@ -55,5 +55,5 @@ func main() {
 	bodyGroup.Post("/file", file)
 	bodyGroup.Post("/json", body)
 
-	log.Fatal(app.Listen(":8080"))
+	log.Fatal(app.Listen("0.0.0.0:8080"))
 }
