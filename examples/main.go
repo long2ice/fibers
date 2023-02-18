@@ -1,11 +1,11 @@
 package main
 
 import (
+	"github.com/go-playground/validator/v10"
+	"github.com/gofiber/fiber/v2"
 	"github.com/long2ice/fibers/security"
 	log "github.com/sirupsen/logrus"
 
-	"github.com/go-playground/validator/v10"
-	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
@@ -37,12 +37,6 @@ func main() {
 	subApp := fibers.New(NewSwagger(), fiber.Config{})
 	subApp.Get("/noModel", noModel)
 	app.Mount("/sub", subApp)
-	app.Use(cors.New(cors.Config{
-		AllowOrigins:     "*",
-		AllowMethods:     "*",
-		AllowHeaders:     "*",
-		AllowCredentials: true,
-	}))
 	queryGroup := app.Group("/query", fibers.Tags("Query"))
 	queryGroup.Get("/list", queryList)
 	queryGroup.Get("/:id", queryPath)
