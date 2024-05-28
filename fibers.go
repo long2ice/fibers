@@ -3,12 +3,13 @@ package fibers
 import (
 	"embed"
 	"encoding/json"
-	log "github.com/sirupsen/logrus"
 	"net/http"
+
+	"github.com/gofiber/template/html/v2"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/getkin/kin-openapi/openapi3"
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/template/html"
 	"github.com/long2ice/fibers/router"
 	"github.com/long2ice/fibers/swagger"
 )
@@ -175,12 +176,15 @@ func (g *App) Init() {
 		s.init()
 	}
 }
+
 func (g *App) BeforeInit(f func()) {
 	g.beforeInitFunc = f
 }
+
 func (g *App) AfterInit(f func()) {
 	g.afterInitFunc = f
 }
+
 func (g *App) Listen(addr string) error {
 	if g.beforeInitFunc != nil {
 		g.beforeInitFunc()

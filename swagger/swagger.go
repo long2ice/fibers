@@ -1,7 +1,6 @@
 package swagger
 
 import (
-	"github.com/google/uuid"
 	"mime/multipart"
 	"net/http"
 	"reflect"
@@ -9,6 +8,8 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
 
 	"github.com/fatih/structtag"
 	"github.com/getkin/kin-openapi/openapi3"
@@ -104,7 +105,7 @@ func (swagger *Swagger) getSchemaByType(t interface{}, request bool) *openapi3.S
 		schema = openapi3.NewArraySchema()
 		schema.Items = &openapi3.SchemaRef{
 			Value: &openapi3.Schema{
-				Type:   "string",
+				Type:   &openapi3.Types{openapi3.TypeString},
 				Format: "binary",
 			},
 		}
@@ -276,7 +277,7 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 func (swagger *Swagger) getResponses(
 	response router.Response,
 	contentType string,
-) openapi3.Responses {
+) *openapi3.Responses {
 	ret := openapi3.NewResponses()
 	for k, v := range response {
 		schema := swagger.getResponseSchemaByModel(v.Model)
@@ -287,13 +288,13 @@ func (swagger *Swagger) getResponses(
 			content = openapi3.NewContentWithSchema(schema, []string{contentType})
 		}
 		description := v.Description
-		ret[k] = &openapi3.ResponseRef{
+		ret.Set(k, &openapi3.ResponseRef{
 			Value: &openapi3.Response{
 				Description: &description,
 				Content:     content,
 				Headers:     v.Headers,
 			},
-		}
+		})
 	}
 	return ret
 }
@@ -423,8 +424,8 @@ func (swagger *Swagger) fixPath(path string) string {
 	return reg.ReplaceAllString(path, "/{${1}}")
 }
 
-func (swagger *Swagger) getPaths() openapi3.Paths {
-	paths := make(openapi3.Paths)
+func (swagger *Swagger) getPaths() *openapi3.Paths {
+	paths := &openapi3.Paths{}
 	for path, m := range swagger.Routers {
 		pathItem := &openapi3.PathItem{}
 		for method, r := range m {
@@ -465,7 +466,7 @@ func (swagger *Swagger) getPaths() openapi3.Paths {
 				pathItem.Trace = operation
 			}
 		}
-		paths[swagger.fixPath(path)] = pathItem
+		paths.Set(swagger.fixPath(path), pathItem)
 	}
 	return paths
 }
