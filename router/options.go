@@ -9,9 +9,7 @@ type Option func(router *Router)
 
 func Security(securities ...security.ISecurity) Option {
 	return func(router *Router) {
-		for _, s := range securities {
-			router.Securities = append(router.Securities, s)
-		}
+		router.Securities = append(router.Securities, securities...)
 	}
 }
 
@@ -51,7 +49,6 @@ func Description(description string) Option {
 	}
 }
 
-// Deprecated mark api is deprecated
 func Deprecated() Option {
 	return func(router *Router) {
 		router.Deprecated = true
@@ -64,14 +61,12 @@ func OperationID(ID string) Option {
 	}
 }
 
-// Exclude exclude in docs
 func Exclude() Option {
 	return func(router *Router) {
 		router.Exclude = true
 	}
 }
 
-// ContentType Set request contentType
 func ContentType(contentType string, contentTypeType ContentTypeType) Option {
 	return func(router *Router) {
 		if contentTypeType == ContentTypeRequest {

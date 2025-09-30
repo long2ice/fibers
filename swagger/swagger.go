@@ -26,6 +26,7 @@ type Swagger struct {
 	Version        string
 	DocsUrl        string
 	RedocUrl       string
+	ScalarUrl      string
 	OpenAPIUrl     string
 	Routers        map[string]map[string]*router.Router
 	Servers        openapi3.Servers
@@ -35,6 +36,7 @@ type Swagger struct {
 	OpenAPI        *openapi3.T
 	SwaggerOptions map[string]interface{}
 	RedocOptions   map[string]interface{}
+	ScalarOptions  map[string]interface{}
 }
 
 func New(title, description, version string, options ...Option) *Swagger {
@@ -44,6 +46,7 @@ func New(title, description, version string, options ...Option) *Swagger {
 		Version:     version,
 		DocsUrl:     "/docs",
 		RedocUrl:    "/redoc",
+		ScalarUrl:   "/scalar",
 		OpenAPIUrl:  "/openapi.json",
 	}
 	for _, option := range options {
@@ -68,8 +71,7 @@ func (swagger *Swagger) getSecurityRequirements(
 
 func (swagger *Swagger) getSchemaByType(t interface{}, request bool) *openapi3.Schema {
 	var schema *openapi3.Schema
-	var m float64
-	m = float64(0)
+	var m float64 = 0
 	switch t.(type) {
 	case int, int8, int16, *int, *int8, *int16:
 		schema = openapi3.NewIntegerSchema()
@@ -143,9 +145,7 @@ func (swagger *Swagger) getRequestSchemaByModel(model interface{}) *openapi3.Sch
 				for key, embedProperty := range embedSchema.Properties {
 					schema.Properties[key] = embedProperty
 				}
-				for _, name := range embedSchema.Required {
-					schema.Required = append(schema.Required, name)
-				}
+				schema.Required = append(schema.Required, embedSchema.Required...)
 			}
 			tag, err := tags.Get(constants.FORM)
 			if err != nil {
@@ -239,9 +239,7 @@ func (swagger *Swagger) getResponseSchemaByModel(model interface{}) *openapi3.Sc
 				for key, embedProperty := range embedSchema.Properties {
 					schema.Properties[key] = embedProperty
 				}
-				for _, name := range embedSchema.Required {
-					schema.Required = append(schema.Required, name)
-				}
+				schema.Required = append(schema.Required, embedSchema.Required...)
 			}
 			tag, err := tags.Get(constants.JSON)
 			if err != nil {
@@ -361,9 +359,7 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 		_, err = tags.Get(constants.EMBED)
 		if err == nil {
 			embedParameters := swagger.getParametersByModel(value.Interface())
-			for _, embedParameter := range embedParameters {
-				parameters = append(parameters, embedParameter)
-			}
+			parameters = append(parameters, embedParameters...)
 		}
 		parameter := &openapi3.Parameter{
 			Schema: openapi3.NewSchemaRef("", swagger.getSchemaByType(value.Interface(), true)),
@@ -420,7 +416,7 @@ func (swagger *Swagger) getParametersByModel(model interface{}) openapi3.Paramet
 
 // /:id -> /{id}
 func (swagger *Swagger) fixPath(path string) string {
-	reg := regexp.MustCompile("/:(\\w+)")
+	reg := regexp.MustCompile(`/:(\w+)`)
 	return reg.ReplaceAllString(path, "/{${1}}")
 }
 
@@ -501,6 +497,11 @@ func (swagger *Swagger) WithDocsUrl(url string) *Swagger {
 
 func (swagger *Swagger) WithRedocUrl(url string) *Swagger {
 	RedocUrl(url)(swagger)
+	return swagger
+}
+
+func (swagger *Swagger) WithScalarUrl(url string) *Swagger {
+	ScalarUrl(url)(swagger)
 	return swagger
 }
 

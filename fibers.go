@@ -136,6 +136,21 @@ func (g *App) init() {
 			"redoc_options": options,
 		})
 	})
+	g.App.Get(g.fullPath(g.Swagger.ScalarUrl), func(c *fiber.Ctx) error {
+		options := `{}`
+		if g.Swagger.ScalarOptions != nil {
+			data, err := json.Marshal(g.Swagger.ScalarOptions)
+			if err != nil {
+				log.Panic(err)
+			}
+			options = string(data)
+		}
+		return c.Render("templates/scalar", fiber.Map{
+			"openapi_url":    g.fullPath(g.Swagger.OpenAPIUrl),
+			"title":          g.Swagger.Title,
+			"scalar_options": options,
+		})
+	})
 	g.initRouters()
 	g.Swagger.BuildOpenAPI()
 }

@@ -35,7 +35,7 @@ func ParseToStruct(aliasTag string, out interface{}, data map[string][]string) e
 
 func HeaderParser(c *fiber.Ctx, model interface{}) error {
 	headerData := make(map[string][]string)
-	c.Request().Header.VisitAll(func(key, val []byte) {
+	for key, val := range c.Request().Header.All() {
 		k := utils.UnsafeString(key)
 		v := utils.UnsafeString(val)
 		if strings.Contains(v, ",") && equalFieldType(model, reflect.Slice, k) {
@@ -46,7 +46,7 @@ func HeaderParser(c *fiber.Ctx, model interface{}) error {
 		} else {
 			headerData[k] = append(headerData[k], v)
 		}
-	})
+	}
 	return ParseToStruct(constants.HEADER, model, headerData)
 }
 
@@ -60,8 +60,8 @@ func ParamsParser(c *fiber.Ctx, model interface{}) error {
 
 func CookiesParser(c *fiber.Ctx, model interface{}) error {
 	params := make(map[string][]string)
-	c.Request().Header.VisitAllCookie(func(key, value []byte) {
+	for key, value := range c.Request().Header.Cookies() {
 		params[string(key)] = append(params[string(key)], string(value))
-	})
+	}
 	return ParseToStruct(constants.COOKIE, model, params)
 }

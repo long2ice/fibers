@@ -18,6 +18,12 @@ func RedocUrl(url string) Option {
 	}
 }
 
+func ScalarUrl(url string) Option {
+	return func(swagger *Swagger) {
+		swagger.ScalarUrl = url
+	}
+}
+
 func Title(title string) Option {
 	return func(swagger *Swagger) {
 		swagger.Title = title
@@ -75,5 +81,11 @@ func SwaggerOptions(options map[string]interface{}) Option {
 func RedocOptions(options map[string]interface{}) Option {
 	return func(swagger *Swagger) {
 		swagger.RedocOptions = options
+	}
+}
+
+func ScalarOptions(options map[string]interface{}) Option {
+	return func(swagger *Swagger) {
+		swagger.ScalarOptions = options
 	}
 }
